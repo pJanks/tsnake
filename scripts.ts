@@ -101,16 +101,16 @@ const makeNetworkRequest = async (url: string, options?: Options) => {
   return parsedResponse;
 }
 
-const padNumber = (number: number) => String(number).padStart(2, '0');
+const padNumber = (number: number): string => String(number).padStart(2, '0');
 
-const toggleModals = (modal: HTMLElement) => {
+const toggleModals = (modal: HTMLElement): void => {
   snakeGameWrapper.classList.toggle('hidden');
   modal.classList.toggle('hidden');
 }
 
 window.onload = () => populateHiScores();
 
-const populateHiScores = async () => {
+const populateHiScores = async (): Promise<void> => {
   try {
     if ('ontouchstart' in document.documentElement) {
       toggleModals(mobileNotSupportedModal);
@@ -119,7 +119,7 @@ const populateHiScores = async () => {
 
     hiScores = await makeNetworkRequest('backend/get_scores.php');
     for (let i = 0; i < 10; i++) {
-      const hiScore = hiScores[i] ?? {
+      const hiScore: HiScore = hiScores[i] ?? {
         name: 'EMPTY',
         score: 0,
         time: '00:00:00',
@@ -133,12 +133,13 @@ const populateHiScores = async () => {
     viewInstructionsButton.disabled = false;
     viewHiScoresButton.disabled = false;
   } catch (err) {
-    console.log(`thre was an error: ${err}`);
     viewHiScoresButton.disabled = true;
+    console.log(`thre was an error: ${err}`);
+    alert(`thre was an error: ${err}`);
   }
 }
 
-const drawSnake = () => {
+const drawSnake = (): void => {
   snake.forEach((part, i) => {
     !i ? snakeBoardContext.fillStyle = '#FF0' : snakeBoardContext.fillStyle = '#28BD00';
     snakeBoardContext.fillRect(part.x, part.y, 10, 10);
@@ -146,7 +147,7 @@ const drawSnake = () => {
   });
 }
 
-const populatePill = async (x?: number, y?: number) => {
+const populatePill = async (x?: number, y?: number): Promise<void> => {
   let pillIsOnOrAroundSnake = false;
   if (!x || !y) {
 
@@ -182,7 +183,7 @@ const populatePill = async (x?: number, y?: number) => {
   snakeBoardContext.closePath();
 }
 
-const handleStartOrResetButtonClick = (e: Event) => {
+const handleStartOrResetButtonClick = (e: Event): void => {
   const target = e.target as HTMLButtonElement;
   if (target.innerText.toLowerCase() !== 'reset') {
     target.innerText = 'Reset';
@@ -201,27 +202,24 @@ const handleStartOrResetButtonClick = (e: Event) => {
   }
 }
 
-const adjustTimes = () => {
+const adjustTimes = (): void => {
   seconds++;
-
   if (seconds === 60) {
     minutes++;
     seconds = 0;
     points += 3;
     console.log('extra points added for a minute');
   }
-
   if (minutes === 60) {
     hours++;
     minutes = 0;
     points += 13;
     console.log('extra points added for an hour');
   }
-
   timer.innerText = `${padNumber(hours)}:${padNumber(minutes)}:${padNumber(seconds)}`;
 }
 
-const runGame = async () => {
+const runGame = async (): Promise<void> => {
   if (loser) {
     viewInstructionsButton.disabled = false;
     viewHiScoresButton.disabled = false;
@@ -252,21 +250,21 @@ const runGame = async () => {
   }
 }
 
-const clearCanvas = () => {
+const clearCanvas = (): void => {
   snakeBoardContext.fillStyle = '#000';
   snakeBoardContext.fillRect(0, 0, snakeBoard.width, snakeBoard.height);
   snakeBoardContext.strokeRect(0, 0, snakeBoard.width, snakeBoard.height);
 }
 
-const moveSnake = () => { 
+const moveSnake = (): void => { 
   
   // where the snake will be next
-  const head = {
+  const head: SnakePart = {
     x: snake[0].x + xVelocity,
     y: snake[0].y + yVelocity,
   };
 
-  // check for collision with walls
+  // check for collisions
   if (head.x === -10 || head.x === 600 || head.y === -10 || head.y === 350 || checkForTailCollision(head)) {
     loser = true;
     running = false;
@@ -280,7 +278,7 @@ const moveSnake = () => {
   }
 }
 
-const checkForTailCollision = (head: SnakePart) => {
+const checkForTailCollision = (head: SnakePart): boolean => {
   let collidedWithTail = false;
   snake.forEach(part => {
     if (head.x === part.x && head.y === part.y) {
@@ -290,7 +288,7 @@ const checkForTailCollision = (head: SnakePart) => {
   return collidedWithTail;
 }
 
-const checkForPillCollision = (head: SnakePart) => {
+const checkForPillCollision = (head: SnakePart): boolean => {
   if ((xVelocity && head.x + 5 === pillXValue) && head.y + 5 === pillYValue || (yVelocity && head.y + 5 === pillYValue) && head.x + 5 === pillXValue) {
 
     pillColor === '#F00' ? pillColor = '#00F' : pillColor = '#F00';
@@ -302,20 +300,21 @@ const checkForPillCollision = (head: SnakePart) => {
     pillsEaten++;
     timeout = Number((timeout - .04).toFixed(2));
 
-    const tableObject = {
+    const updatedScoreDetails: TableObject = {
       intervalRunsIn: `${timeout} ms`,
       nextPillIsWorth: points,
       score,
       pillsEaten,
     };
-    console.table(tableObject);
+    console.table(updatedScoreDetails);
     return true;
   }
+  return false;
 }
 
 // update velocities based on keypresses
 // and make sure that you can't move backwards into your self
-const setVelocities = (e: KeyboardEvent) => {
+const setVelocities = (e: KeyboardEvent): void => {
   if (!keyClicked) {
     keyClicked = true;
     const key = e.key.toLowerCase()
@@ -335,7 +334,7 @@ const setVelocities = (e: KeyboardEvent) => {
   }
 }
 
-const insertScore = async (name: string) => {
+const insertScore = async (name: string): Promise<void> => {
   const time = timer.innerText;
   const options = {
     method: 'POST',

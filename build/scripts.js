@@ -78,8 +78,9 @@ const populateHiScores = async () => {
         viewHiScoresButton.disabled = false;
     }
     catch (err) {
-        console.log(`thre was an error: ${err}`);
         viewHiScoresButton.disabled = true;
+        console.log(`thre was an error: ${err}`);
+        alert(`thre was an error: ${err}`);
     }
 };
 const drawSnake = () => {
@@ -191,7 +192,7 @@ const moveSnake = () => {
         x: snake[0].x + xVelocity,
         y: snake[0].y + yVelocity,
     };
-    // check for collision with walls
+    // check for collisions
     if (head.x === -10 || head.x === 600 || head.y === -10 || head.y === 350 || checkForTailCollision(head)) {
         loser = true;
         running = false;
@@ -223,34 +224,36 @@ const checkForPillCollision = (head) => {
         points++;
         pillsEaten++;
         timeout = Number((timeout - .04).toFixed(2));
-        const tableObject = {
+        const updatedScoreDetails = {
             intervalRunsIn: `${timeout} ms`,
             nextPillIsWorth: points,
             score,
             pillsEaten,
         };
-        console.table(tableObject);
+        console.table(updatedScoreDetails);
         return true;
     }
+    return false;
 };
 // update velocities based on keypresses
 // and make sure that you can't move backwards into your self
 const setVelocities = (e) => {
     if (!keyClicked) {
         keyClicked = true;
-        if (!xVelocity && e.key.toLowerCase() === 'a') {
+        const key = e.key.toLowerCase();
+        if (!xVelocity && key === 'a' || key === 'arrowleft') {
             xVelocity = -10;
             yVelocity = 0;
         }
-        else if (!xVelocity && e.key.toLowerCase() === 'd') {
+        else if (!xVelocity && key === 'd' || key === 'arrowright') {
             xVelocity = 10;
             yVelocity = 0;
         }
-        else if (!yVelocity && e.key.toLowerCase() === 'w') {
+        else if (!yVelocity && key === 'w' || key === 'arrowup') {
             xVelocity = 0;
             yVelocity = -10;
         }
-        else if (!yVelocity && e.key.toLowerCase() === 's') {
+        else if (!yVelocity && key === 's' || key === 'arrowdown') {
             xVelocity = 0;
             yVelocity = 10;
         }
