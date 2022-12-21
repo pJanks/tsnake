@@ -19,6 +19,41 @@ const viewHiScoresButton = document.querySelector('.view-hi-scores-button');
 // targeted spans
 const finalScore = document.querySelector('.final-score');
 const timer = document.querySelector('.timer');
+// check all dom elements exist
+const throwDomError = (element) => {
+    alert(`${element}: null or undefined . . .`);
+    throw Error(`${element}: null or undefined . . .`);
+};
+if (!snakeGameWrapper)
+    throwDomError('snakeGameWrapper');
+if (!snakeBoard)
+    throwDomError('snakeBoard');
+if (!snakeBoardContext)
+    throwDomError('snakeBoardContext');
+if (!instructionsModal)
+    throwDomError('instructionsModal');
+if (!mobileNotSupportedModal)
+    throwDomError('mobileNotSupportedModal');
+if (!hiScoresModal)
+    throwDomError('hiScoresModal');
+if (!gameOverModal)
+    throwDomError('gameOverModal');
+if (!closeInstructionsButton)
+    throwDomError('closeInstructionsButton');
+if (!viewInstructionsButton)
+    throwDomError('viewInstructionsButton');
+if (!startOrResetButton)
+    throwDomError('startOrResetButton');
+if (!closeHiScoresButton)
+    throwDomError('closeHiScoresButton');
+if (!closeGameOverButton)
+    throwDomError('closeGameOverButton');
+if (!viewHiScoresButton)
+    throwDomError('viewHiScoresButton');
+if (!finalScore)
+    throwDomError('finalScore');
+if (!timer)
+    throwDomError('timer');
 closeInstructionsButton.addEventListener('click', () => toggleModals(instructionsModal));
 viewInstructionsButton.addEventListener('click', () => toggleModals(instructionsModal));
 startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
@@ -62,7 +97,12 @@ const populateHiScores = async () => {
             toggleModals(mobileNotSupportedModal);
             return;
         }
-        hiScores = await makeNetworkRequest('backend/get_scores.php');
+        const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
+        if (!Array.isArray(getScoresResponse)) {
+            alert('there was an error with the getScoresResponse . . .');
+            return;
+        }
+        hiScores = getScoresResponse;
         for (let i = 0; i < 10; i++) {
             const hiScore = (_a = hiScores[i]) !== null && _a !== void 0 ? _a : {
                 name: 'EMPTY',
@@ -79,8 +119,8 @@ const populateHiScores = async () => {
     }
     catch (err) {
         viewHiScoresButton.disabled = true;
-        console.log(`thre was an error: ${err}`);
-        alert(`thre was an error: ${err}`);
+        alert(`there was an error: ${err}`);
+        throw Error(`there was an error: ${err}`);
     }
 };
 const drawSnake = () => {
@@ -141,13 +181,13 @@ const adjustTimes = () => {
         minutes++;
         seconds = 0;
         points += 3;
-        console.log('extra points added for a minute');
+        console.log('three extra points added for a minute');
     }
     if (minutes === 60) {
         hours++;
         minutes = 0;
         points += 13;
-        console.log('extra points added for an hour');
+        console.log('thirteen extra points added for an hour');
     }
     timer.innerText = `${padNumber(hours)}:${padNumber(minutes)}:${padNumber(seconds)}`;
 };

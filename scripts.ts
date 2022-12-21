@@ -22,6 +22,28 @@ const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as H
 const finalScore = document.querySelector('.final-score') as HTMLElement;
 const timer = document.querySelector('.timer') as HTMLElement;
 
+// check all dom elements exist
+const throwDomError = (element: string): Error => {
+  alert(`${element}: null or undefined . . .`);
+  throw Error (`${element}: null or undefined . . .`);
+}
+
+if (!snakeGameWrapper) throwDomError('snakeGameWrapper');
+if (!snakeBoard) throwDomError('snakeBoard');
+if (!snakeBoardContext) throwDomError('snakeBoardContext');
+if (!instructionsModal) throwDomError('instructionsModal');
+if (!mobileNotSupportedModal) throwDomError('mobileNotSupportedModal');
+if (!hiScoresModal) throwDomError('hiScoresModal');
+if (!gameOverModal) throwDomError('gameOverModal');
+if (!closeInstructionsButton) throwDomError('closeInstructionsButton');
+if (!viewInstructionsButton) throwDomError('viewInstructionsButton');
+if (!startOrResetButton) throwDomError('startOrResetButton');
+if (!closeHiScoresButton) throwDomError('closeHiScoresButton');
+if (!closeGameOverButton) throwDomError('closeGameOverButton');
+if (!viewHiScoresButton) throwDomError('viewHiScoresButton');
+if (!finalScore) throwDomError('finalScore');
+if (!timer) throwDomError('timer');
+
 closeInstructionsButton.addEventListener('click', () => toggleModals(instructionsModal));
 viewInstructionsButton.addEventListener('click', () => toggleModals(instructionsModal));
 startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
@@ -95,7 +117,7 @@ const initialTableObject: TableObject = {
 
 console.table(initialTableObject);
 
-const makeNetworkRequest = async (url: string, options?: Options) => {
+const makeNetworkRequest = async (url: string, options?: Options): Promise<HiScore[] | void> => {
   const response = await fetch(url, options);
   const parsedResponse = await response.json();
   return parsedResponse;
@@ -117,7 +139,13 @@ const populateHiScores = async (): Promise<void> => {
       return;
     }
 
-    hiScores = await makeNetworkRequest('backend/get_scores.php');
+    const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
+    if (!Array.isArray(getScoresResponse)) {
+      alert('there was an error with the getScoresResponse . . .');
+      return;
+    }
+
+    hiScores = getScoresResponse;
     for (let i = 0; i < 10; i++) {
       const hiScore: HiScore = hiScores[i] ?? {
         name: 'EMPTY',
@@ -134,8 +162,8 @@ const populateHiScores = async (): Promise<void> => {
     viewHiScoresButton.disabled = false;
   } catch (err) {
     viewHiScoresButton.disabled = true;
-    console.log(`thre was an error: ${err}`);
-    alert(`thre was an error: ${err}`);
+    alert(`there was an error: ${err}`);
+    throw Error(`there was an error: ${err}`);
   }
 }
 
@@ -208,13 +236,13 @@ const adjustTimes = (): void => {
     minutes++;
     seconds = 0;
     points += 3;
-    console.log('extra points added for a minute');
+    console.log('three extra points added for a minute');
   }
   if (minutes === 60) {
     hours++;
     minutes = 0;
     points += 13;
-    console.log('extra points added for an hour');
+    console.log('thirteen extra points added for an hour');
   }
   timer.innerText = `${padNumber(hours)}:${padNumber(minutes)}:${padNumber(seconds)}`;
 }
