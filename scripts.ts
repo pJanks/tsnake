@@ -318,16 +318,17 @@ const checkForPillCollision = (head: SnakePart) => {
 const setVelocities = (e: KeyboardEvent) => {
   if (!keyClicked) {
     keyClicked = true;
-    if (!xVelocity && e.key.toLowerCase() === 'a') {
+    const key = e.key.toLowerCase()
+    if (!xVelocity && key === 'a' || key === 'arrowleft') {
       xVelocity = -10;
       yVelocity = 0;
-    } else if (!xVelocity && e.key.toLowerCase() === 'd') {
+    } else if (!xVelocity && key === 'd' || key === 'arrowright') {
       xVelocity = 10;
       yVelocity = 0;
-    } else if (!yVelocity && e.key.toLowerCase() === 'w') {
+    } else if (!yVelocity && key === 'w' || key === 'arrowup') {
       xVelocity = 0;
       yVelocity = -10;
-    } else if (!yVelocity && e.key.toLowerCase() === 's') {
+    } else if (!yVelocity && key === 's' || key === 'arrowdown') {
       xVelocity = 0;
       yVelocity = 10;
     }
