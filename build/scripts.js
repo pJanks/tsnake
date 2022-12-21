@@ -19,11 +19,11 @@ const viewHiScoresButton = document.querySelector('.view-hi-scores-button');
 // targeted spans
 const finalScore = document.querySelector('.final-score');
 const timer = document.querySelector('.timer');
-// check all dom elements exist
 const throwDomError = (element) => {
     alert(`${element}: null or undefined . . .`);
     throw Error(`${element}: null or undefined . . .`);
 };
+// check all dom elements exist
 if (!snakeGameWrapper)
     throwDomError('snakeGameWrapper');
 if (!snakeBoard)
@@ -89,39 +89,33 @@ const toggleModals = (modal) => {
     snakeGameWrapper.classList.toggle('hidden');
     modal.classList.toggle('hidden');
 };
-window.onload = () => populateHiScores();
 const populateHiScores = async () => {
     var _a;
-    try {
-        if ('ontouchstart' in document.documentElement) {
-            toggleModals(mobileNotSupportedModal);
-            return;
-        }
-        const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
-        if (!Array.isArray(getScoresResponse)) {
-            alert('there was an error with the getScoresResponse . . .');
-            return;
-        }
-        hiScores = getScoresResponse;
-        for (let i = 0; i < 10; i++) {
-            const hiScore = (_a = hiScores[i]) !== null && _a !== void 0 ? _a : {
-                name: 'EMPTY',
-                score: 0,
-                time: '00:00:00',
-                pills_eaten: 0,
-            };
-            const hiScoreRow = document.querySelector(`.table-data-${i}`);
-            hiScoreRow.innerText = `${padNumber(i + 1)}. ${hiScore.name} - ${hiScore.score} - ${hiScore.time} - ${hiScore.pills_eaten} pills eaten`;
-        }
-        startOrResetButton.disabled = false;
-        viewInstructionsButton.disabled = false;
-        viewHiScoresButton.disabled = false;
+    if ('ontouchstart' in document.documentElement) {
+        toggleModals(mobileNotSupportedModal);
+        return;
     }
-    catch (err) {
-        viewHiScoresButton.disabled = true;
-        alert(`there was an error: ${err}`);
-        throw Error(`there was an error: ${err}`);
+    const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
+    if (!Array.isArray(getScoresResponse)) {
+        alert('there was an error with the getScoresResponse . . .');
+        return;
     }
+    hiScores = getScoresResponse;
+    for (let i = 0; i < 10; i++) {
+        const hiScore = (_a = hiScores[i]) !== null && _a !== void 0 ? _a : {
+            name: 'EMPTY',
+            score: 0,
+            time: '00:00:00',
+            pills_eaten: 0,
+        };
+        const hiScoreRow = document.querySelector(`.table-data-${i}`);
+        if (!hiScoreRow)
+            throwDomError(`hiScoreRow ${i}`);
+        hiScoreRow.innerText = `${padNumber(i + 1)}. ${hiScore.name} - ${hiScore.score} - ${hiScore.time} - ${hiScore.pills_eaten} pills eaten`;
+    }
+    startOrResetButton.disabled = false;
+    viewInstructionsButton.disabled = false;
+    viewHiScoresButton.disabled = false;
 };
 const drawSnake = () => {
     snake.forEach((part, i) => {
@@ -310,5 +304,6 @@ const insertScore = async (name) => {
     };
     await makeNetworkRequest('backend/insert_scores.php', options);
 };
-drawSnake();
+populateHiScores();
 populatePill();
+drawSnake();
