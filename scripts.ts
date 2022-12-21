@@ -31,8 +31,35 @@ viewHiScoresButton.addEventListener('click', () => toggleModals(hiScoresModal));
 snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
 snakeBoard.addEventListener('keydown', (e) => setVelocities(e));
 
+interface SnakePart {
+  x: number,
+  y: number,
+}
+
+interface HiScore {
+  name: string,
+  score: number,
+  time: string,
+  pills_eaten: number,
+}
+
+interface TableObject {
+  intervalRunsIn: string,
+  nextPillIsWorth: number,
+  score: number,
+  pillsEaten: number,
+}
+
+interface Options {
+  method: string,
+  body: string,
+  headers: {
+    'content-type': string,
+  },
+}
+
 // snake always begins in the middle of the board
-const snake = [
+const snake: SnakePart[] = [
   { x: 300, y: 180 },
   { x: 290, y: 180 },
   { x: 280, y: 180 },
@@ -53,13 +80,13 @@ minutes = 0,
 seconds = 0,
 xVelocity = 10,
 yVelocity = 0,
-hiScores = [],
-pillXValue,
-pillYValue,
-interval;
+hiScores: HiScore[] = [],
+pillXValue: number,
+pillYValue: number,
+interval: number;
 
 // create and print a table to the console of defaults
-const initialTableObject = {
+const initialTableObject: TableObject = {
   intervalRunsIn: `${timeout} ms`,
   nextPillIsWorth: points,
   score,
@@ -68,15 +95,15 @@ const initialTableObject = {
 
 console.table(initialTableObject);
 
-const makeNetworkRequest = async (url, options = {}) => {
+const makeNetworkRequest = async (url: string, options?: Options) => {
   const response = await fetch(url, options);
   const parsedResponse = await response.json();
   return parsedResponse;
 }
 
-const padNumber = number => String(number).padStart(2, '0');
+const padNumber = (number: number) => String(number).padStart(2, '0');
 
-const toggleModals = modal => {
+const toggleModals = (modal: HTMLElement) => {
   snakeGameWrapper.classList.toggle('hidden');
   modal.classList.toggle('hidden');
 }
@@ -98,7 +125,7 @@ const populateHiScores = async () => {
         time: '00:00:00',
         pills_eaten: 0,
       };
-      const hiScoreRow = document.querySelector(`.table-data-${i}`);
+      const hiScoreRow = document.querySelector(`.table-data-${i}`) as HTMLElement;
       hiScoreRow.innerText = `${padNumber(i + 1)}. ${hiScore.name} - ${hiScore.score} - ${hiScore.time} - ${hiScore.pills_eaten} pills eaten`;
     }
     
@@ -119,7 +146,7 @@ const drawSnake = () => {
   });
 }
 
-const populatePill = async (x = null, y = null) => {
+const populatePill = async (x?: number, y?: number) => {
   let pillIsOnOrAroundSnake = false;
   if (!x || !y) {
 
@@ -155,9 +182,10 @@ const populatePill = async (x = null, y = null) => {
   snakeBoardContext.closePath();
 }
 
-const handleStartOrResetButtonClick = (e) => {
-  if (e.target.innerText.toLowerCase() !== 'reset') {
-    e.target.innerText = 'Reset';
+const handleStartOrResetButtonClick = (e: Event) => {
+  const target = e.target as HTMLButtonElement;
+  if (target.innerText.toLowerCase() !== 'reset') {
+    target.innerText = 'Reset';
 
     viewInstructionsButton.disabled = true;
     viewHiScoresButton.disabled = true;
@@ -200,7 +228,7 @@ const runGame = async () => {
 
     toggleModals(gameOverModal);
     closeGameOverButton.focus();
-    finalScore.innerText = score;
+    finalScore.innerText = String(score);
 
     if (!hiScores[9] || score > Number(hiScores[9].score)) {
       const name = prompt(`
@@ -252,7 +280,7 @@ const moveSnake = () => {
   }
 }
 
-const checkForTailCollision = (head) => {
+const checkForTailCollision = (head: SnakePart) => {
   let collidedWithTail = false;
   snake.forEach(part => {
     if (head.x === part.x && head.y === part.y) {
@@ -262,7 +290,7 @@ const checkForTailCollision = (head) => {
   return collidedWithTail;
 }
 
-const checkForPillCollision = head => {
+const checkForPillCollision = (head: SnakePart) => {
   if ((xVelocity && head.x + 5 === pillXValue) && head.y + 5 === pillYValue || (yVelocity && head.y + 5 === pillYValue) && head.x + 5 === pillXValue) {
 
     pillColor === '#F00' ? pillColor = '#00F' : pillColor = '#F00';
@@ -287,7 +315,7 @@ const checkForPillCollision = head => {
 
 // update velocities based on keypresses
 // and make sure that you can't move backwards into your self
-const setVelocities = (e) => {
+const setVelocities = (e: KeyboardEvent) => {
   if (!keyClicked) {
     keyClicked = true;
     if (!xVelocity && e.key.toLowerCase() === 'a') {
@@ -306,7 +334,7 @@ const setVelocities = (e) => {
   }
 }
 
-const insertScore = async (name) => {
+const insertScore = async (name: string) => {
   const time = timer.innerText;
   const options = {
     method: 'POST',
