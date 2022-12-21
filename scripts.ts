@@ -1,8 +1,32 @@
-import { HiScores, TableObject, Options, Head } from './interfaces';
+// board dimensions are 600px x 350px
+// each snake piece is 10px x 10px
 
 const app = async () => {
-  // board dimensions are 600px x 350px
-  // each snake piece is 10px x 10px
+
+  interface HiScores {
+    name: string,
+    score: number,
+    time: string,
+    pills_eaten: number,
+  }
+  
+  interface TableObject {
+    intervalRunsIn: string,
+    nextPillIsWorth: number,
+    score: number,
+    pillsEaten: number,
+  }
+  
+  interface Options {
+    method: string,
+    body: string,
+    headers: { 'content-type': string },
+  }
+  
+  interface Head {
+    x: number,
+    y: number,
+  }
 
   const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
   const viewInstructionsButton = document.querySelector('.view-instructions-button') as HTMLButtonElement;
@@ -11,17 +35,36 @@ const app = async () => {
   const closeGameOverButton = document.querySelector('.close-game-over-button') as HTMLButtonElement;
   const instructionsModal = document.querySelector('.game-instructions-modal') as HTMLElement;
   const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as HTMLButtonElement;
+
   const mobileNotSupportedModal = document.querySelector('.mobile-modal') as HTMLElement;
   const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
   const hiScoresModal = document.querySelector('.hi-scores-modal') as HTMLElement;
   const gameOverModal = document.querySelector('.game-over-modal') as HTMLElement;
-  const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
   const finalScore = document.querySelector('.final-score') as HTMLElement;
   const timer = document.querySelector('.timer') as HTMLElement;
+  
+  const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
+  const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
 
-  if (!closeInstructionsButton || !viewInstructionsButton || !startOrResetButton || !closeHiScoresButton || !closeGameOverButton || !instructionsModal || !viewHiScoresButton || !mobileNotSupportedModal || !snakeGameWrapper || !hiScoresModal || !gameOverModal || !snakeBoard || !finalScore || !timer) {
-    throw new Error('dom element was undefined or null . . .');
+  const throwDomError = (element: string) => {
+    throw new Error(`${element} was undefined or null . . .`);
   }
+  
+  if (!closeInstructionsButton) throwDomError('closeInstructionsButton'); 
+  if (!viewInstructionsButton) throwDomError('viewInstructionsButton'); 
+  if (!startOrResetButton) throwDomError('startOrResetButton'); 
+  if (!closeHiScoresButton) throwDomError('closeHiScoresButton'); 
+  if (!closeGameOverButton) throwDomError('closeGameOverButton'); 
+  if (!instructionsModal) throwDomError('instructionsModal'); 
+  if (!viewHiScoresButton) throwDomError('viewHiScoresButton'); 
+  if (!mobileNotSupportedModal) throwDomError('mobileNotSupportedModal'); 
+  if (!snakeGameWrapper) throwDomError('snakeGameWrapper'); 
+  if (!hiScoresModal) throwDomError('hiScoresModal'); 
+  if (!gameOverModal) throwDomError('gameOverModal'); 
+  if (!snakeBoard) throwDomError('snakeBoard'); 
+  if (!finalScore) throwDomError('finalScore'); 
+  if (!timer) throwDomError('timer'); 
+  if (!snakeBoardContext) throwDomError('snakeBoardContext');
 
   closeInstructionsButton.addEventListener('click', () => toggleModals(instructionsModal));
   viewInstructionsButton.addEventListener('click', () => toggleModals(instructionsModal));
@@ -33,8 +76,6 @@ const app = async () => {
 
   // prevent a user from navigating out of gameboard
   snakeBoard.addEventListener('blur', () => running ? snakeBoard.focus() : null);
-
-  const snakeBoardContext = snakeBoard.getContext('2d');
 
   // snake always begins in the middle of the board
   const snake = [
@@ -121,9 +162,6 @@ const app = async () => {
   }
 
   const drawSnake = () => {
-    if (!snakeBoardContext) {
-      throw new Error('canvas context is undefined or null . . .');
-    }
     snake.forEach((part, i) => {
       !i ? snakeBoardContext.fillStyle = '#FF0' : snakeBoardContext.fillStyle = '#28BD00';
       snakeBoardContext.fillRect(part.x, part.y, 10, 10);
@@ -159,9 +197,6 @@ const app = async () => {
     }
 
     // draw pills
-    if (!snakeBoardContext) {
-      throw new Error('canvas context is undefined or null . . .');
-    }
     snakeBoardContext.beginPath();
     snakeBoardContext.ellipse(pillXValue, pillYValue, 5 , 5, Math.PI / 4, 0, 2 * Math.PI);
     snakeBoardContext.stroke();
@@ -245,9 +280,6 @@ const app = async () => {
   }
 
   const clearCanvas = () => {
-    if (!snakeBoardContext) {
-      throw new Error('canvas context is undefined or null . . .');
-    }
     snakeBoardContext.fillStyle = '#000';
     snakeBoardContext.fillRect(0, 0, snakeBoard.width, snakeBoard.height);
     snakeBoardContext.strokeRect(0, 0, snakeBoard.width, snakeBoard.height);
