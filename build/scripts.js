@@ -2,10 +2,10 @@
 // gameboard dimensions are 600px x 350px and each snake segment is 10px x 10px
 // fn to alert and error out
 const throwAlertAndError = (identifier, method) => {
-    const startingMessageFragment = 'something is wrong with ';
-    const endingMessageFragment = method ? `${identifier}` : `${identifier}, method: ${method}`;
-    alert(`${startingMessageFragment}${endingMessageFragment}`);
-    throw new Error(`${startingMessageFragment}${endingMessageFragment}`);
+    const startingMessageFragment = `something is wrong with ${identifier}`;
+    const possibleEndingMessageFragment = method ? `, method: ${method}` : '';
+    alert(`${startingMessageFragment}${possibleEndingMessageFragment}`);
+    throw new Error(`${startingMessageFragment}${possibleEndingMessageFragment}`);
 };
 // validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
