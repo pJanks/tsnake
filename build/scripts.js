@@ -99,14 +99,14 @@ const populateHiScores = async () => {
         alert('something is wrong with getScoresResponse . . .');
         throw Error('something is wrong with getScoresResponse . . .');
     }
-    hiScores = getScoresResponse;
     for (let i = 0; i < 10; i++) {
-        const hiScore = hiScores[i] ?? {
+        const hiScore = getScoresResponse[i] ?? {
             name: 'EMPTY',
             score: 0,
             time: '00:00:00',
             pills_eaten: 0,
         };
+        hiScores.push(hiScore);
         const hiScoreRow = document.querySelector(`.table-data-${i}`);
         if (!hiScoreRow)
             throwDomError(`hiScoreRow ${i}`);
@@ -198,7 +198,7 @@ const runGame = async () => {
         toggleModal(gameOverModal);
         closeGameOverButton.focus();
         finalScore.innerText = String(score);
-        if (!hiScores[9] || score > hiScores[9].score) {
+        if (score >= hiScores[9].score) {
             const name = prompt(`
         Congrats, You\'ve scored in the top 10!!
         Please enter an identifier:

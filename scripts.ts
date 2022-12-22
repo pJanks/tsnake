@@ -160,15 +160,14 @@ const populateHiScores = async (): Promise<void> | never => {
     alert('something is wrong with getScoresResponse . . .');
     throw Error('something is wrong with getScoresResponse . . .');
   }
-
-  hiScores = getScoresResponse;
   for (let i: number = 0; i < 10; i++) {
-    const hiScore: Score = hiScores[i] ?? {
+    const hiScore: Score = getScoresResponse[i] ?? {
       name: 'EMPTY',
       score: 0,
       time: '00:00:00',
       pills_eaten: 0,
     };
+    hiScores.push(hiScore);
     const hiScoreRow = document.querySelector(`.table-data-${i}`) as HTMLElement;
     if (!hiScoreRow) throwDomError(`hiScoreRow ${i}`);
 
@@ -274,7 +273,7 @@ const runGame = async (): Promise<void> => {
     closeGameOverButton.focus();
     finalScore.innerText = String(score);
 
-    if (!hiScores[9] || score > hiScores[9].score) {
+    if (score >= hiScores[9].score) {
       const name = prompt(`
         Congrats, You\'ve scored in the top 10!!
         Please enter an identifier:
