@@ -163,8 +163,6 @@ const populatePill = (x, y) => {
 };
 const handleStartOrResetButtonClick = (e) => {
     const target = e.target;
-    if (!target)
-        throwDomError('startOrResetButton');
     if (target.innerText.toLowerCase() !== 'reset') {
         interval = setInterval(adjustTimes, 1000);
         viewInstructionsButton.disabled = true;

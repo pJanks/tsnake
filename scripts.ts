@@ -232,8 +232,7 @@ const populatePill = (x?: number, y?: number): void => {
 }
 
 const handleStartOrResetButtonClick = (e: MouseEvent): void => {
-  const target = e.target as HTMLButtonElement;
-  if (!target) throwDomError('startOrResetButton');
+  const target = e.target as EventTarget as HTMLButtonElement;
 
   if (target.innerText.toLowerCase() !== 'reset') {
     interval = setInterval(adjustTimes, 1000);
