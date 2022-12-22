@@ -199,7 +199,7 @@ const runGame = async () => {
         toggleModal(gameOverModal);
         closeGameOverButton.focus();
         finalScore.innerText = String(score);
-        if (score > hiScores[9].score) {
+        if (!hiScores[9] || score > hiScores[9].score) {
             const name = prompt(`
         Congrats, You\'ve scored in the top 10!!
         Please enter an identifier:
