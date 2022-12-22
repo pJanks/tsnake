@@ -1,7 +1,8 @@
-// everything works or errors out
-const throwAlertAndError = (identifier: string): never => {
-  alert(`something is wrong with ${identifier}`);
-  throw new Error(`something is wrong with ${identifier}`);
+// alert and error out
+const throwAlertAndError = (identifier: string, method?: string): never => {
+  const message: string = method ? `something is wrong with ${identifier}` : `something is wrong with ${identifier} with method ${method}`;
+  alert(message);
+  throw new Error(message);
 }
 
 // interfaces (obvoiusly..)
@@ -57,7 +58,7 @@ if (!snakeBoardContext) {
   throwAlertAndError('snakeBoardContext');
 }
 
-// * declare all other dom elements to be verified
+// ? declare and validate other existing dom elements
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
 const viewInstructionsButton = document.querySelector('.view-instructions-button') as HTMLButtonElement;
@@ -72,31 +73,34 @@ const mobileNotSupportedModal = document.querySelector('.mobile-modal') as HTMLE
 const hiScoresModal = document.querySelector('.hi-scores-modal') as HTMLElement;
 const gameOverModal = document.querySelector('.game-over-modal') as HTMLElement;
 
-// targeted spans
+// spans
 const finalScore = document.querySelector('.final-score') as HTMLElement;
 const timer = document.querySelector('.timer') as HTMLElement;
 
-// check validity of all unverified dom elements
-const unverifiedDomElements: DomElement[] = [
+const unvalidatedDomElements: DomElement[] = [
+  // buttons
   { closeInstructionsButton },
   { viewInstructionsButton },
   { closeHiScoresButton },
   { closeGameOverButton },
   { startOrResetButton },
   { viewHiScoresButton },
+  // modals
   { mobileNotSupportedModal },
   { instructionsModal },
   { hiScoresModal },
   { gameOverModal },
+  // spans
   { finalScore },
   { timer },
 ];
 
-unverifiedDomElements.forEach((unverifiedDomElement: DomElement, i: number): void => {
-  const key: string = Object.keys(unverifiedDomElement)[0];
-  if (!unverifiedDomElements[i][key]) throwAlertAndError(key);
+unvalidatedDomElements.forEach((unvalidatedDomElement: DomElement, i: number): void => {
+  const key: string = Object.keys(unvalidatedDomElement)[0];
+  if (!unvalidatedDomElements[i][key]) throwAlertAndError(key);
 });
 
+// ? all elements are validated, add listeners
 startOrResetButton.addEventListener('click', (e: MouseEvent) => handleStartOrResetButtonClick(e));
 closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
 viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
@@ -115,19 +119,19 @@ const snake: SnakeSegment[] = [
   { x: 260, y: 180 },
 ];
 
-let pillColor = '#F00',
-keyClicked = false,
-running = false,
-loser = false,
-timeout = 100,
-points = 100,
-pillsEaten = 0,
-xVelocity = 10,
-yVelocity = 0,
-minutes = 0,
-seconds = 0,
-score = 0,
-hours = 0,
+let pillColor: string = '#F00',
+keyClicked: boolean = false,
+running: boolean = false,
+loser: boolean = false,
+timeout: number = 100,
+points: number = 100,
+pillsEaten: number = 0,
+xVelocity: number = 10,
+yVelocity: number = 0,
+minutes: number = 0,
+seconds: number = 0,
+score: number = 0,
+hours: number = 0,
 hiScores: Score[] = [],
 pillXValue: number,
 pillYValue: number,
@@ -149,7 +153,7 @@ const makeNetworkRequest = async (url: string, options?: RequestOptions): Promis
     const parsedResponse:  Score[] | void = await response.json();
     return parsedResponse;
   } catch(err) {
-    throwAlertAndError('makeNetworkRequest');
+    throwAlertAndError('makeNetworkRequest', options?.method ?? 'GET');
   }
 }
 
