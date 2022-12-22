@@ -178,7 +178,7 @@ const populateHiScores = async (): Promise<void> | never => {
     const rowPillOrPills: string = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
     const rowPillsEaten: string = `${String(hiScore.pills_eaten)} ${rowPillOrPills} eaten`;
     
-    const rowContent = `${rowNumber}. ${rowName} - ${rowScore} - ${rowTime} - ${rowPillsEaten}`;
+    const rowContent: string = `${rowNumber}. ${rowName} - ${rowScore} - ${rowTime} - ${rowPillsEaten}`;
     hiScoreRow.innerText = rowContent;
   }
   startOrResetButton.disabled = false;
