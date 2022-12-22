@@ -4,12 +4,11 @@ const throwDomError = (elementName) => {
     alert(`${elementName}: null or undefined . . .`);
     throw Error(`${elementName}: null or undefined . . .`);
 };
-// gameboard: dimensions are 600px x 350px each snake piece is 10px x 10px
+// gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
 const snakeBoard = document.querySelector('.snake-game-canvas');
-// check for board to get canvas context
 if (!snakeBoard)
-    throwDomError('snakeBoard');
+    throwDomError('snakeBoard'); // verify gameboard or error
 const snakeBoardContext = snakeBoard.getContext('2d');
 // modals
 const instructionsModal = document.querySelector('.game-instructions-modal');
@@ -48,14 +47,14 @@ domElements.forEach((domElement, i) => {
     if (!domElements[i][key])
         throwDomError(key);
 });
+startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
 closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
 viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
-startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
 closeHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
 closeGameOverButton.addEventListener('click', () => toggleModal(gameOverModal));
 viewHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
-snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
 snakeBoard.addEventListener('keydown', (e) => setVelocities(e));
+snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
 // snake
 const snake = [
     { x: 300, y: 180 },
@@ -96,6 +95,7 @@ const populateHiScores = async () => {
     }
     const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
     if (!Array.isArray(getScoresResponse)) {
+        alert('something is wrong with getScoresResponse . . .');
         throw Error('something is wrong with getScoresResponse . . .');
     }
     hiScores = getScoresResponse;
@@ -141,7 +141,7 @@ const populatePill = (x, y) => {
             return;
         }
         // if coordinates are on snake
-        snake.forEach(part => {
+        snake.forEach((part) => {
             if (possibleX * 10 - part.x <= 5 && possibleX * 10 - part.x >= -5 && possibleY * 10 - part.y <= 5 && possibleY * 10 - part.y >= -5) {
                 populatePill();
                 return;
@@ -199,7 +199,7 @@ const runGame = async () => {
         toggleModal(gameOverModal);
         closeGameOverButton.focus();
         finalScore.innerText = String(score);
-        if (!hiScores[9] || score > Number(hiScores[9].score)) {
+        if (score > hiScores[9].score) {
             const name = prompt(`
         Congrats, You\'ve scored in the top 10!!
         Please enter an identifier:

@@ -36,12 +36,10 @@ const throwDomError = (elementName: string): never => {
   throw Error(`${elementName}: null or undefined . . .`);
 }
 
-// gameboard: dimensions are 600px x 350px each snake piece is 10px x 10px
+// gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
-
-// check for board to get canvas context
-if (!snakeBoard) throwDomError('snakeBoard');
+if (!snakeBoard) throwDomError('snakeBoard'); // verify gameboard or error
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
 
 // modals
@@ -85,14 +83,14 @@ domElements.forEach((domElement: DomElement, i: number): void => {
   if (!domElements[i][key]) throwDomError(key);
 });
 
+startOrResetButton.addEventListener('click', (e: MouseEvent) => handleStartOrResetButtonClick(e));
 closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
 viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
-startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
 closeHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
 closeGameOverButton.addEventListener('click', () => toggleModal(gameOverModal));
 viewHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
+snakeBoard.addEventListener('keydown', (e: KeyboardEvent) => setVelocities(e));
 snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
-snakeBoard.addEventListener('keydown', (e) => setVelocities(e));
 
 // snake
 const snake: SnakeSegment[] = [
@@ -155,13 +153,14 @@ const populateHiScores = async (): Promise<void> | never => {
     return;
   }
 
-  const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
+  const getScoresResponse: Score[] | void = await makeNetworkRequest('backend/get_scores.php');
   if (!Array.isArray(getScoresResponse)) {
-    throw Error('something is wrong with getScoresResponse . . .')
+    alert('something is wrong with getScoresResponse . . .');
+    throw Error('something is wrong with getScoresResponse . . .');
   }
 
   hiScores = getScoresResponse;
-  for (let i = 0; i < 10; i++) {
+  for (let i: number = 0; i < 10; i++) {
     const hiScore: Score = hiScores[i] ?? {
       name: 'EMPTY',
       score: 0,
@@ -187,7 +186,7 @@ const populateHiScores = async (): Promise<void> | never => {
 }
 
 const drawSnake = (): void => {
-  snake.forEach((part, i) => {
+  snake.forEach((part: SnakeSegment, i: number) => {
     !i ? snakeBoardContext.fillStyle = '#FF0' : snakeBoardContext.fillStyle = '#28BD00';
     snakeBoardContext.fillRect(part.x, part.y, 10, 10);
     snakeBoardContext.strokeRect(part.x, part.y, 10, 10);
@@ -199,8 +198,8 @@ const populatePill = (x?: number, y?: number): void => {
 
     // get random coordinates on the canvas for pill placement
     // add five to center the pill in the square on the grid
-    const possibleX = Math.random() * 60 + 5;
-    const possibleY = Math.random() * 35 + 5;
+    const possibleX: number = Math.random() * 60 + 5;
+    const possibleY: number = Math.random() * 35 + 5;
     
     // if coordinates are not within border
     if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345) {
@@ -209,7 +208,7 @@ const populatePill = (x?: number, y?: number): void => {
     }
     
     // if coordinates are on snake
-    snake.forEach(part => {
+    snake.forEach((part: SnakeSegment) => {
       if (possibleX * 10 - part.x <= 5 && possibleX * 10 - part.x >= -5 && possibleY * 10 - part.y <= 5 && possibleY * 10 - part.y >= -5) {
         populatePill();
         return;
@@ -230,7 +229,7 @@ const populatePill = (x?: number, y?: number): void => {
   snakeBoardContext.closePath();
 }
 
-const handleStartOrResetButtonClick = (e: Event): void => {
+const handleStartOrResetButtonClick = (e: MouseEvent): void => {
   const target = e.target as HTMLButtonElement;
   if (!target) throwDomError('startOrResetButton');
 
@@ -274,7 +273,7 @@ const runGame = async (): Promise<void> => {
     closeGameOverButton.focus();
     finalScore.innerText = String(score);
 
-    if (!hiScores[9] || score > Number(hiScores[9].score)) {
+    if (score > hiScores[9].score) {
       const name = prompt(`
         Congrats, You\'ve scored in the top 10!!
         Please enter an identifier:
@@ -325,7 +324,7 @@ const moveSnake = (): void => {
 }
 
 const checkForTailCollision = (head: SnakeSegment): boolean => {
-  let collidedWithTail = false;
+  let collidedWithTail: boolean = false;
   snake.forEach(part => {
     if (head.x === part.x && head.y === part.y) {
       collidedWithTail = true;
@@ -363,7 +362,7 @@ const checkForPillCollision = (head: SnakeSegment): boolean => {
 const setVelocities = (e: KeyboardEvent): void => {
   if (!keyClicked) {
     keyClicked = true;
-    const key = e.key.toLowerCase();
+    const key: string = e.key.toLowerCase();
     if (!xVelocity && key === 'a' || key === 'arrowleft') {
       xVelocity = -10;
       yVelocity = 0;
@@ -381,7 +380,7 @@ const setVelocities = (e: KeyboardEvent): void => {
 }
 
 const insertScore = async (name: string): Promise<void> => {
-  const time = timer.innerText;
+  const time: string = timer.innerText;
   const body: Score = {
     name,
     score,
