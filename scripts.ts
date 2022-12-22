@@ -1,7 +1,7 @@
 // dom elements exist or error out
-const throwDomError = (elementName: string): never => {
-  alert(`${elementName}: null or undefined . . .`);
-  throw Error(`${elementName}: null or undefined . . .`);
+const throwError = (identifier: string): never => {
+  alert(`something is wrong with ${identifier}`);
+  throw new Error(`something is wrong with ${identifier}`);
 }
 
 // interfaces (obvoiusly..)
@@ -38,10 +38,10 @@ interface RequestOptions {
 
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
-if (!snakeBoard) throwDomError('snakeBoard'); // validate canvas element
+if (!snakeBoard) throwError('snakeBoard'); // validate canvas element
 
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
-if (!snakeBoardContext) throwDomError('snakeBoardContext'); // validate context element
+if (!snakeBoardContext) throwError('snakeBoardContext'); // validate context element
 
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
 
@@ -82,7 +82,7 @@ const uncheckedDomElements: DomElement[] = [
 
 uncheckedDomElements.forEach((uncheckedDomElement: DomElement, i: number): void => {
   const key: string = Object.keys(uncheckedDomElement)[0];
-  if (!uncheckedDomElements[i][key]) throwDomError(key);
+  if (!uncheckedDomElements[i][key]) throwError(key);
 });
 
 startOrResetButton.addEventListener('click', (e: MouseEvent) => handleStartOrResetButtonClick(e));
@@ -103,19 +103,19 @@ const snake: SnakeSegment[] = [
   { x: 260, y: 180 },
 ];
 
-let pillColor: string = '#F00',
-keyClicked: boolean = false,
-running: boolean = false,
-loser: boolean = false,
-timeout: number = 100,
-points: number = 100,
-pillsEaten: number = 0,
-xVelocity: number = 10,
-yVelocity: number = 0,
-minutes: number = 0,
-seconds: number = 0,
-score: number = 0,
-hours: number = 0,
+let pillColor = '#F00',
+keyClicked = false,
+running = false,
+loser = false,
+timeout = 100,
+points = 100,
+pillsEaten = 0,
+xVelocity = 10,
+yVelocity = 0,
+minutes = 0,
+seconds = 0,
+score = 0,
+hours = 0,
 hiScores: Score[] = [],
 pillXValue: number,
 pillYValue: number,
@@ -137,8 +137,7 @@ const makeNetworkRequest = async (url: string, options?: RequestOptions): Promis
     const parsedResponse:  Score[] | void = await response.json();
     return parsedResponse;
   } catch(err) {
-    alert(err);
-    throw err;
+    throwError('makeNetworkRequest');
   }
 }
 
@@ -156,30 +155,29 @@ const populateHiScores = async (): Promise<void> | never => {
   }
 
   const getScoresResponse: Score[] | void = await makeNetworkRequest('backend/get_scores.php');
-  if (!Array.isArray(getScoresResponse)) {
-    alert('something is wrong with getScoresResponse . . .');
-    throw Error('something is wrong with getScoresResponse . . .');
-  }
-  for (let i: number = 0; i < 10; i++) {
-    const hiScore: Score = getScoresResponse[i] ?? {
-      name: 'EMPTY',
-      score: 0,
-      time: '00:00:00',
-      pills_eaten: 0,
-    };
-    hiScores.push(hiScore);
-    const hiScoreRow = document.querySelector(`.table-data-${i}`) as HTMLElement;
-    if (!hiScoreRow) throwDomError(`hiScoreRow ${i}`);
 
-    const rowNumber: string = padNumber(i + 1);
-    const rowName: string = hiScore.name;
-    const rowScore: string = String(hiScore.score);
-    const rowTime: string = hiScore.time;
-    const rowPillOrPills: string = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
-    const rowPillsEaten: string = `${String(hiScore.pills_eaten)} ${rowPillOrPills} eaten`;
-    
-    const rowContent: string = `${rowNumber}. ${rowName} - ${rowScore} - ${rowTime} - ${rowPillsEaten}`;
-    hiScoreRow.innerText = rowContent;
+  if (Array.isArray(getScoresResponse)) {
+    for (let i: number = 0; i < 10; i++) {
+      const hiScore: Score = getScoresResponse[i] ?? {
+        name: 'EMPTY',
+        score: 0,
+        time: '00:00:00',
+        pills_eaten: 0,
+      };
+      hiScores.push(hiScore);
+      const hiScoreRow = document.querySelector(`.table-data-${i}`) as HTMLElement;
+      if (!hiScoreRow) throwError(`hiScoreRow ${i}`);
+  
+      const rowNumber: string = padNumber(i + 1);
+      const rowName: string = hiScore.name;
+      const rowScore: string = String(hiScore.score);
+      const rowTime: string = hiScore.time;
+      const rowPillOrPills: string = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
+      const rowPillsEaten: string = `${String(hiScore.pills_eaten)} ${rowPillOrPills} eaten`;
+      
+      const rowContent: string = `${rowNumber}. ${rowName} - ${rowScore} - ${rowTime} - ${rowPillsEaten}`;
+      hiScoreRow.innerText = rowContent;
+    }
   }
   startOrResetButton.disabled = false;
   viewInstructionsButton.disabled = false;

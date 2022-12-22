@@ -1,16 +1,16 @@
 "use strict";
 // dom elements exist or error out
-const throwDomError = (elementName) => {
-    alert(`${elementName}: null or undefined . . .`);
-    throw Error(`${elementName}: null or undefined . . .`);
+const throwError = (identifier) => {
+    alert(`something is wrong with ${identifier}`);
+    throw new Error(`something is wrong with ${identifier}`);
 };
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
 const snakeBoard = document.querySelector('.snake-game-canvas');
 if (!snakeBoard)
-    throwDomError('snakeBoard'); // validate canvas element
+    throwError('snakeBoard'); // validate canvas element
 const snakeBoardContext = snakeBoard.getContext('2d');
 if (!snakeBoardContext)
-    throwDomError('snakeBoardContext'); // validate context element
+    throwError('snakeBoardContext'); // validate context element
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button');
@@ -46,7 +46,7 @@ const uncheckedDomElements = [
 uncheckedDomElements.forEach((uncheckedDomElement, i) => {
     const key = Object.keys(uncheckedDomElement)[0];
     if (!uncheckedDomElements[i][key])
-        throwDomError(key);
+        throwError(key);
 });
 startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
 closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
@@ -80,8 +80,7 @@ const makeNetworkRequest = async (url, options) => {
         return parsedResponse;
     }
     catch (err) {
-        alert(err);
-        throw err;
+        throwError('makeNetworkRequest');
     }
 };
 const padNumber = (number) => String(number).padStart(2, '0');
@@ -95,29 +94,27 @@ const populateHiScores = async () => {
         return;
     }
     const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
-    if (!Array.isArray(getScoresResponse)) {
-        alert('something is wrong with getScoresResponse . . .');
-        throw Error('something is wrong with getScoresResponse . . .');
-    }
-    for (let i = 0; i < 10; i++) {
-        const hiScore = getScoresResponse[i] ?? {
-            name: 'EMPTY',
-            score: 0,
-            time: '00:00:00',
-            pills_eaten: 0,
-        };
-        hiScores.push(hiScore);
-        const hiScoreRow = document.querySelector(`.table-data-${i}`);
-        if (!hiScoreRow)
-            throwDomError(`hiScoreRow ${i}`);
-        const rowNumber = padNumber(i + 1);
-        const rowName = hiScore.name;
-        const rowScore = String(hiScore.score);
-        const rowTime = hiScore.time;
-        const rowPillOrPills = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
-        const rowPillsEaten = `${String(hiScore.pills_eaten)} ${rowPillOrPills} eaten`;
-        const rowContent = `${rowNumber}. ${rowName} - ${rowScore} - ${rowTime} - ${rowPillsEaten}`;
-        hiScoreRow.innerText = rowContent;
+    if (Array.isArray(getScoresResponse)) {
+        for (let i = 0; i < 10; i++) {
+            const hiScore = getScoresResponse[i] ?? {
+                name: 'EMPTY',
+                score: 0,
+                time: '00:00:00',
+                pills_eaten: 0,
+            };
+            hiScores.push(hiScore);
+            const hiScoreRow = document.querySelector(`.table-data-${i}`);
+            if (!hiScoreRow)
+                throwError(`hiScoreRow ${i}`);
+            const rowNumber = padNumber(i + 1);
+            const rowName = hiScore.name;
+            const rowScore = String(hiScore.score);
+            const rowTime = hiScore.time;
+            const rowPillOrPills = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
+            const rowPillsEaten = `${String(hiScore.pills_eaten)} ${rowPillOrPills} eaten`;
+            const rowContent = `${rowNumber}. ${rowName} - ${rowScore} - ${rowTime} - ${rowPillsEaten}`;
+            hiScoreRow.innerText = rowContent;
+        }
     }
     startOrResetButton.disabled = false;
     viewInstructionsButton.disabled = false;
