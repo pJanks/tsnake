@@ -142,6 +142,9 @@ const initialTableObject: ConsoleTable = {
 console.table(initialTableObject);
 
 const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> => {
+  if (hiScoresStayDisabled) {
+    return [];
+  }
   try {
     const response: Response = await fetch(url, options);
     const parsedResponse:  Score[] | void = await response.json();

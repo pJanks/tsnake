@@ -84,6 +84,9 @@ const initialTableObject = {
 };
 console.table(initialTableObject);
 const makeNetworkRequest = async (url, options) => {
+    if (hiScoresStayDisabled) {
+        return [];
+    }
     try {
         const response = await fetch(url, options);
         const parsedResponse = await response.json();
