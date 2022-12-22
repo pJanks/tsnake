@@ -1,12 +1,7 @@
 "use strict";
 // if any validation check fails alert and throw error
 const alertAndThrowError = (identifier, method) => {
-    const startingMessageFragment = `something is wrong with ${identifier}`;
-    const endingMessageFragment = method ? `, method: ${method}..` : '..';
-    const message = `${startingMessageFragment}${endingMessageFragment}`;
-    document.querySelectorAll('button').forEach((button) => {
-        button.disabled = true;
-    });
+    const message = `something is wrong with ${identifier}`;
     alert(message);
     throw new Error(message);
 };
@@ -71,7 +66,7 @@ viewHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
 snakeBoard.addEventListener('keydown', (e) => setVelocities(e));
 snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
 // nonconstant global variables
-let pillColor = '#F00', keyClicked = false, running = false, loser = false, pillsEaten = 0, xVelocity = 10, yVelocity = 0, timeout = 100, points = 100, minutes = 0, seconds = 0, score = 0, hours = 0, pillXValue, pillYValue, interval;
+let pillColor = '#F00', hiScoresStayDisabled = false, keyClicked = false, running = false, loser = false, pillsEaten = 0, xVelocity = 10, yVelocity = 0, timeout = 100, points = 100, minutes = 0, seconds = 0, score = 0, hours = 0, pillXValue, pillYValue, interval;
 const snake = [
     { x: 300, y: 180 },
     { x: 290, y: 180 },
@@ -95,6 +90,8 @@ const makeNetworkRequest = async (url, options) => {
         return parsedResponse;
     }
     catch (err) {
+        hiScoresStayDisabled = true;
+        viewHiScoresButton.disabled = true;
         const method = options?.method ?? 'GET';
         throw new Error(`something is wrong with makeNetworkRequest. method: ${method}`);
     }
@@ -137,7 +134,9 @@ const populateHiScores = async () => {
     }
     startOrResetButton.disabled = false;
     viewInstructionsButton.disabled = false;
-    viewHiScoresButton.disabled = false;
+    if (!hiScoresStayDisabled) {
+        viewHiScoresButton.disabled = false;
+    }
 };
 const drawSnake = () => {
     snake.forEach((part, i) => {
@@ -210,11 +209,13 @@ const adjustTimes = () => {
 const runGame = async () => {
     if (loser) {
         viewInstructionsButton.disabled = false;
-        viewHiScoresButton.disabled = false;
+        if (!hiScoresStayDisabled) {
+            viewHiScoresButton.disabled = false;
+        }
         toggleModal(gameOverModal);
         closeGameOverButton.focus();
         finalScore.innerText = String(score);
-        if (!hiScores[9] || score > hiScores[9].score) {
+        if (!viewHiScoresButton.disabled && score >= hiScores[9].score) {
             const name = prompt(`
         Congrats, You\'ve scored in the top 10!!
         Please enter an identifier:

@@ -33,14 +33,7 @@ interface RequestOptions {
 
 // if any validation check fails alert and throw error
 const alertAndThrowError = (identifier: string, method?: string): never => {
-  const startingMessageFragment: string = `something is wrong with ${identifier}`;
-  const endingMessageFragment: string = method ? `, method: ${method}..` : '..';
-  const message: string = `${startingMessageFragment}${endingMessageFragment}`;
-
-  document.querySelectorAll('button').forEach((button: HTMLButtonElement) => {
-    button.disabled = true
-  });
-
+  const message: string = `something is wrong with ${identifier}`;
   alert(message);
   throw new Error(message);
 }
@@ -112,6 +105,7 @@ snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
 
 // nonconstant global variables
 let pillColor: string = '#F00',
+hiScoresStayDisabled: boolean = false,
 keyClicked: boolean = false,
 running: boolean = false,
 loser: boolean = false,
@@ -153,6 +147,8 @@ const makeNetworkRequest = async (url: string, options?: RequestOptions): Promis
     const parsedResponse:  Score[] | void = await response.json();
     return parsedResponse;
   } catch(err) {
+    hiScoresStayDisabled = true;
+    viewHiScoresButton.disabled = true;
     const method: string = options?.method ?? 'GET';
     throw new Error(`something is wrong with makeNetworkRequest. method: ${method}`)
   }
@@ -202,7 +198,10 @@ const populateHiScores = async (): Promise<void> => {
   }
   startOrResetButton.disabled = false;
   viewInstructionsButton.disabled = false;
-  viewHiScoresButton.disabled = false;
+
+  if (!hiScoresStayDisabled) {
+    viewHiScoresButton.disabled = false;
+  }
 }
 
 const drawSnake = (): void => {
@@ -286,13 +285,16 @@ const adjustTimes = (): void => {
 const runGame = async (): Promise<void> => {
   if (loser) {
     viewInstructionsButton.disabled = false;
-    viewHiScoresButton.disabled = false;
+
+    if (!hiScoresStayDisabled) {
+      viewHiScoresButton.disabled = false;
+    }
 
     toggleModal(gameOverModal);
     closeGameOverButton.focus();
     finalScore.innerText = String(score);
 
-    if (!hiScores[9] || score > hiScores[9].score) {
+    if (!viewHiScoresButton.disabled && score >= hiScores[9].score) {
       const name = prompt(`
         Congrats, You\'ve scored in the top 10!!
         Please enter an identifier:
