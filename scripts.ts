@@ -315,16 +315,14 @@ const checkForTailCollision = (head: SnakeSegment): boolean => {
 }
 
 const checkForPillCollision = (head: SnakeSegment): boolean => {
-  if ((xVelocity && head.x + 5 === pillXValue) && head.y + 5 === pillYValue || (yVelocity && head.y + 5 === pillYValue) && head.x + 5 === pillXValue) {
+  if (head.x + 5 === pillXValue && head.y + 5 === pillYValue) {
 
     pillColor === '#F00' ? pillColor = '#00F' : pillColor = '#F00';
-
-    snake.unshift(head);
-
-    score += points;
-    points++;
-    pillsEaten++;
     timeout = Number((timeout - .04).toFixed(2));
+    snake.unshift(head);
+    score += points;
+    pillsEaten++;
+    points++;
 
     const updatedScoreDetails: ConsoleTable = {
       intervalRunsIn: `${timeout} ms`,
@@ -368,7 +366,7 @@ const insertScore = async (name: string): Promise<void> => {
     time,
     pills_eaten: pillsEaten,
   }
-  const options = {
+  const options: RequestOptions = {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {

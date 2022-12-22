@@ -256,7 +256,7 @@ const checkForTailCollision = (head) => {
     return collidedWithTail;
 };
 const checkForPillCollision = (head) => {
-    if ((xVelocity && head.x + 5 === pillXValue) && head.y + 5 === pillYValue || (yVelocity && head.y + 5 === pillYValue) && head.x + 5 === pillXValue) {
+    if (head.x + 5 === pillXValue && head.y + 5 === pillYValue) {
         pillColor === '#F00' ? pillColor = '#00F' : pillColor = '#F00';
         snake.unshift(head);
         score += points;
