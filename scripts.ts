@@ -11,6 +11,8 @@ interface DomElement {
 }
 
 interface SnakeSegment {
+// @NOTE ^ `interface` works here, but I think should just be a `type` - interfaces have more complex functionality and the ability to overwrite themselves, whereas types to not (think let vs const)
+//         so if this signature will never change, it should just be a `type`
   x: number,
   y: number,
 }
@@ -41,7 +43,7 @@ interface RequestOptions {
 // each snake segment is 10px x 10px
 
 // validate game wrapper
-const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
+const snakeGameWrapper: HTMLElement | null = document.querySelector('.snake-game-wrapper');
 if (!snakeGameWrapper) {
   throwAlertAndError('snakeGameWrapper');
 }
@@ -161,6 +163,7 @@ const padNumber = (number: number): string => String(number).padStart(2, '0');
 
 const toggleModal = (modal: HTMLElement): void => {
   snakeGameWrapper.classList.toggle('hidden');
+  // @NOTE ^ check that snakeGameWrapper !== null otherwise, throw an error
   modal.classList.toggle('hidden');
 }
 
@@ -173,6 +176,7 @@ const populateHiScores = async (): Promise<void> => {
   const getScoresResponse: Score[] | void = await makeNetworkRequest('backend/get_scores.php');
 
   if (Array.isArray(getScoresResponse)) {
+    // @NOTE ^ in addition to checking if the response here is an array, you should also check that it's not an empty array (at least) and throw an error otherwise if appropriate
     for (let i: number = 0; i < 10; i++) {
       const hiScore: Score = getScoresResponse[i] ?? {
         name: 'EMPTY',
@@ -209,6 +213,7 @@ const drawSnake = (): void => {
 }
 
 const populatePill = (x?: number, y?: number): void => {
+  // @NOTE ^ the `?` use here means the param is optional, could this fn be called without an arg for `y` and/or `x`?
   if (!x || !y) {
 
     // get random coordinates on the canvas for pill placement
@@ -351,7 +356,14 @@ const checkForPillCollision = (head: SnakeSegment): boolean => {
   if ((xVelocity && head.x + 5 === pillXValue) && head.y + 5 === pillYValue || (yVelocity && head.y + 5 === pillYValue) && head.x + 5 === pillXValue) {
 
     pillColor === '#F00' ? pillColor = '#00F' : pillColor = '#F00';
-
+    // @NOTE if you want to be more explicit, since `pillColor` can only be one of 2 colors, you should create an `enum` and set the type for the pillColor to the enum
+    // example:
+    // enum PillColor {
+    //   RED = '#F00',
+    //   BLUE = '#00F'
+    // }
+    // let pillColor: PillColor = PillColor.RED
+    
     snake.unshift(head);
 
     score += points;
