@@ -1,4 +1,4 @@
-// dom elements exist or error out
+// everything works or errors out
 const throwAlertAndError = (identifier: string): never => {
   alert(`something is wrong with ${identifier}`);
   throw new Error(`something is wrong with ${identifier}`);

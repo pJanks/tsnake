@@ -1,5 +1,5 @@
 "use strict";
-// dom elements exist or error out
+// everything works or errors out
 const throwAlertAndError = (identifier) => {
     alert(`something is wrong with ${identifier}`);
     throw new Error(`something is wrong with ${identifier}`);
