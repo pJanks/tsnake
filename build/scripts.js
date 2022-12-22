@@ -1,8 +1,14 @@
 "use strict";
-// board dimensions are 600px x 350px
-// each snake piece is 10px x 10px
+const throwDomError = (element) => {
+    alert(`${element}: null or undefined . . .`);
+    throw Error(`${element}: null or undefined . . .`);
+};
+// gameboard: dimensions are 600px x 350px each snake piece is 10px x 10px
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
 const snakeBoard = document.querySelector('.snake-game-canvas');
+// check for board
+if (!snakeBoard)
+    throwDomError('snakeBoard');
 const snakeBoardContext = snakeBoard.getContext('2d');
 // modals
 const instructionsModal = document.querySelector('.game-instructions-modal');
@@ -19,15 +25,9 @@ const viewHiScoresButton = document.querySelector('.view-hi-scores-button');
 // targeted spans
 const finalScore = document.querySelector('.final-score');
 const timer = document.querySelector('.timer');
-const throwDomError = (element) => {
-    alert(`${element}: null or undefined . . .`);
-    throw Error(`${element}: null or undefined . . .`);
-};
 // check all dom elements exist
 if (!snakeGameWrapper)
     throwDomError('snakeGameWrapper');
-if (!snakeBoard)
-    throwDomError('snakeBoard');
 if (!snakeBoardContext)
     throwDomError('snakeBoardContext');
 if (!instructionsModal)
@@ -54,15 +54,15 @@ if (!finalScore)
     throwDomError('finalScore');
 if (!timer)
     throwDomError('timer');
-closeInstructionsButton.addEventListener('click', () => toggleModals(instructionsModal));
-viewInstructionsButton.addEventListener('click', () => toggleModals(instructionsModal));
+closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
+viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
 startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
-closeHiScoresButton.addEventListener('click', () => toggleModals(hiScoresModal));
-closeGameOverButton.addEventListener('click', () => toggleModals(gameOverModal));
-viewHiScoresButton.addEventListener('click', () => toggleModals(hiScoresModal));
+closeHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
+closeGameOverButton.addEventListener('click', () => toggleModal(gameOverModal));
+viewHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
 snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
 snakeBoard.addEventListener('keydown', (e) => setVelocities(e));
-// snake always begins in the middle of the board
+// snake
 const snake = [
     { x: 300, y: 180 },
     { x: 290, y: 180 },
@@ -71,7 +71,7 @@ const snake = [
     { x: 260, y: 180 },
 ];
 let pillColor = '#F00', running = false, loser = false, score = 0, timeout = 100, points = 100, keyClicked = false, pillsEaten = 0, hours = 0, minutes = 0, seconds = 0, xVelocity = 10, yVelocity = 0, hiScores = [], pillXValue, pillYValue, interval;
-// create and print a table to the console of defaults
+// print defaults
 const initialTableObject = {
     intervalRunsIn: `${timeout} ms`,
     nextPillIsWorth: points,
@@ -85,14 +85,14 @@ const makeNetworkRequest = async (url, options) => {
     return parsedResponse;
 };
 const padNumber = (number) => String(number).padStart(2, '0');
-const toggleModals = (modal) => {
+const toggleModal = (modal) => {
     snakeGameWrapper.classList.toggle('hidden');
     modal.classList.toggle('hidden');
 };
 const populateHiScores = async () => {
     var _a;
     if ('ontouchstart' in document.documentElement) {
-        toggleModals(mobileNotSupportedModal);
+        toggleModal(mobileNotSupportedModal);
         return;
     }
     const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
@@ -124,6 +124,9 @@ const drawSnake = () => {
         snakeBoardContext.strokeRect(part.x, part.y, 10, 10);
     });
 };
+// * this fn is probably very inefficient
+// * especially if many spots on the board
+// * are occupied
 const populatePill = async (x, y) => {
     let pillIsOnOrAroundSnake = false;
     if (!x || !y) {
@@ -156,14 +159,16 @@ const populatePill = async (x, y) => {
 };
 const handleStartOrResetButtonClick = (e) => {
     const target = e.target;
+    if (!target)
+        throwDomError('startOrResetButton');
     if (target.innerText.toLowerCase() !== 'reset') {
-        target.innerText = 'Reset';
+        interval = setInterval(adjustTimes, 1000);
         viewInstructionsButton.disabled = true;
         viewHiScoresButton.disabled = true;
-        interval = setInterval(adjustTimes, 1000);
+        target.innerText = 'Reset';
+        running = true;
         snakeBoard.focus();
         runGame();
-        running = true;
     }
     else {
         location.reload();
@@ -189,7 +194,7 @@ const runGame = async () => {
     if (loser) {
         viewInstructionsButton.disabled = false;
         viewHiScoresButton.disabled = false;
-        toggleModals(gameOverModal);
+        toggleModal(gameOverModal);
         closeGameOverButton.focus();
         finalScore.innerText = String(score);
         if (!hiScores[9] || score > Number(hiScores[9].score)) {
@@ -295,9 +300,15 @@ const setVelocities = (e) => {
 };
 const insertScore = async (name) => {
     const time = timer.innerText;
+    const body = {
+        score,
+        name,
+        time,
+        pills_eaten: pillsEaten,
+    };
     const options = {
         method: 'POST',
-        body: JSON.stringify({ score, name, time, pillsEaten }),
+        body: JSON.stringify(body),
         headers: {
             'content-type': 'application/json',
         },

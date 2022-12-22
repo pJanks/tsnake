@@ -1,7 +1,14 @@
-// board dimensions are 600px x 350px
-// each snake piece is 10px x 10px
+const throwDomError = (element: string): Error => {
+  alert(`${element}: null or undefined . . .`);
+  throw Error (`${element}: null or undefined . . .`);
+}
+
+// gameboard: dimensions are 600px x 350px each snake piece is 10px x 10px
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
+
+// check for board
+if (!snakeBoard) throwDomError('snakeBoard');
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
 
 // modals
@@ -22,14 +29,8 @@ const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as H
 const finalScore = document.querySelector('.final-score') as HTMLElement;
 const timer = document.querySelector('.timer') as HTMLElement;
 
-const throwDomError = (element: string): Error => {
-  alert(`${element}: null or undefined . . .`);
-  throw Error (`${element}: null or undefined . . .`);
-}
-
 // check all dom elements exist
 if (!snakeGameWrapper) throwDomError('snakeGameWrapper');
-if (!snakeBoard) throwDomError('snakeBoard');
 if (!snakeBoardContext) throwDomError('snakeBoardContext');
 if (!instructionsModal) throwDomError('instructionsModal');
 if (!mobileNotSupportedModal) throwDomError('mobileNotSupportedModal');
@@ -44,35 +45,36 @@ if (!viewHiScoresButton) throwDomError('viewHiScoresButton');
 if (!finalScore) throwDomError('finalScore');
 if (!timer) throwDomError('timer');
 
-closeInstructionsButton.addEventListener('click', () => toggleModals(instructionsModal));
-viewInstructionsButton.addEventListener('click', () => toggleModals(instructionsModal));
+closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
+viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
 startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
-closeHiScoresButton.addEventListener('click', () => toggleModals(hiScoresModal));
-closeGameOverButton.addEventListener('click', () => toggleModals(gameOverModal));
-viewHiScoresButton.addEventListener('click', () => toggleModals(hiScoresModal));
+closeHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
+closeGameOverButton.addEventListener('click', () => toggleModal(gameOverModal));
+viewHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
+
 snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
 snakeBoard.addEventListener('keydown', (e) => setVelocities(e));
 
-interface SnakePart {
+interface SnakeSegment {
   x: number,
   y: number,
 }
 
-interface HiScore {
+interface Score {
   name: string,
   score: number,
   time: string,
   pills_eaten: number,
 }
 
-interface TableObject {
+interface ConsoleTable {
   intervalRunsIn: string,
   nextPillIsWorth: number,
   score: number,
   pillsEaten: number,
 }
 
-interface Options {
+interface RequestOptions {
   method: string,
   body: string,
   headers: {
@@ -80,8 +82,8 @@ interface Options {
   },
 }
 
-// snake always begins in the middle of the board
-const snake: SnakePart[] = [
+// snake
+const snake: SnakeSegment[] = [
   { x: 300, y: 180 },
   { x: 290, y: 180 },
   { x: 280, y: 180 },
@@ -102,13 +104,13 @@ minutes = 0,
 seconds = 0,
 xVelocity = 10,
 yVelocity = 0,
-hiScores: HiScore[] = [],
+hiScores: Score[] = [],
 pillXValue: number,
 pillYValue: number,
 interval: number;
 
-// create and print a table to the console of defaults
-const initialTableObject: TableObject = {
+// print defaults
+const initialTableObject: ConsoleTable = {
   intervalRunsIn: `${timeout} ms`,
   nextPillIsWorth: points,
   score,
@@ -117,7 +119,7 @@ const initialTableObject: TableObject = {
 
 console.table(initialTableObject);
 
-const makeNetworkRequest = async (url: string, options?: Options): Promise<HiScore[] | void> => {
+const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> => {
   const response = await fetch(url, options);
   const parsedResponse = await response.json();
   return parsedResponse;
@@ -125,14 +127,14 @@ const makeNetworkRequest = async (url: string, options?: Options): Promise<HiSco
 
 const padNumber = (number: number): string => String(number).padStart(2, '0');
 
-const toggleModals = (modal: HTMLElement): void => {
+const toggleModal = (modal: HTMLElement): void => {
   snakeGameWrapper.classList.toggle('hidden');
   modal.classList.toggle('hidden');
 }
 
 const populateHiScores = async (): Promise<void> => {
   if ('ontouchstart' in document.documentElement) {
-    toggleModals(mobileNotSupportedModal);
+    toggleModal(mobileNotSupportedModal);
     return;
   }
 
@@ -144,7 +146,7 @@ const populateHiScores = async (): Promise<void> => {
 
   hiScores = getScoresResponse;
   for (let i = 0; i < 10; i++) {
-    const hiScore: HiScore = hiScores[i] ?? {
+    const hiScore: Score = hiScores[i] ?? {
       name: 'EMPTY',
       score: 0,
       time: '00:00:00',
@@ -169,6 +171,9 @@ const drawSnake = (): void => {
   });
 }
 
+// * this fn is probably very inefficient
+// * especially if many spots on the board
+// * are occupied
 const populatePill = async (x?: number, y?: number): Promise<void> => {
   let pillIsOnOrAroundSnake = false;
   if (!x || !y) {
@@ -207,18 +212,17 @@ const populatePill = async (x?: number, y?: number): Promise<void> => {
 
 const handleStartOrResetButtonClick = (e: Event): void => {
   const target = e.target as HTMLButtonElement;
-  if (target.innerText.toLowerCase() !== 'reset') {
-    target.innerText = 'Reset';
+  if (!target) throwDomError('startOrResetButton');
 
+  if (target.innerText.toLowerCase() !== 'reset') {
+    interval = setInterval(adjustTimes, 1000);
     viewInstructionsButton.disabled = true;
     viewHiScoresButton.disabled = true;
-  
-    interval = setInterval(adjustTimes, 1000);
-  
-    snakeBoard.focus();
-  
-    runGame();
+    target.innerText = 'Reset';
     running = true;
+
+    snakeBoard.focus();
+    runGame();
   } else {
     location.reload();
   }
@@ -246,7 +250,7 @@ const runGame = async (): Promise<void> => {
     viewInstructionsButton.disabled = false;
     viewHiScoresButton.disabled = false;
 
-    toggleModals(gameOverModal);
+    toggleModal(gameOverModal);
     closeGameOverButton.focus();
     finalScore.innerText = String(score);
 
@@ -281,7 +285,7 @@ const clearCanvas = (): void => {
 const moveSnake = (): void => { 
   
   // where the snake will be next
-  const head: SnakePart = {
+  const head: SnakeSegment = {
     x: snake[0].x + xVelocity,
     y: snake[0].y + yVelocity,
   };
@@ -300,7 +304,7 @@ const moveSnake = (): void => {
   }
 }
 
-const checkForTailCollision = (head: SnakePart): boolean => {
+const checkForTailCollision = (head: SnakeSegment): boolean => {
   let collidedWithTail = false;
   snake.forEach(part => {
     if (head.x === part.x && head.y === part.y) {
@@ -310,7 +314,7 @@ const checkForTailCollision = (head: SnakePart): boolean => {
   return collidedWithTail;
 }
 
-const checkForPillCollision = (head: SnakePart): boolean => {
+const checkForPillCollision = (head: SnakeSegment): boolean => {
   if ((xVelocity && head.x + 5 === pillXValue) && head.y + 5 === pillYValue || (yVelocity && head.y + 5 === pillYValue) && head.x + 5 === pillXValue) {
 
     pillColor === '#F00' ? pillColor = '#00F' : pillColor = '#F00';
@@ -322,7 +326,7 @@ const checkForPillCollision = (head: SnakePart): boolean => {
     pillsEaten++;
     timeout = Number((timeout - .04).toFixed(2));
 
-    const updatedScoreDetails: TableObject = {
+    const updatedScoreDetails: ConsoleTable = {
       intervalRunsIn: `${timeout} ms`,
       nextPillIsWorth: points,
       score,
@@ -358,9 +362,15 @@ const setVelocities = (e: KeyboardEvent): void => {
 
 const insertScore = async (name: string): Promise<void> => {
   const time = timer.innerText;
+  const body: Score = {
+    score,
+    name,
+    time,
+    pills_eaten: pillsEaten,
+  }
   const options = {
     method: 'POST',
-    body: JSON.stringify({ score, name, time, pillsEaten }),
+    body: JSON.stringify(body),
     headers: {
       'content-type': 'application/json',
     },
