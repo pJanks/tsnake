@@ -31,7 +31,7 @@ interface RequestOptions {
 }
 
 // dom elements exist or error out
-const throwDomError = (elementName: string): Error => {
+const throwDomError = (elementName: string): never => {
   alert(`${elementName}: null or undefined . . .`);
   throw Error(`${elementName}: null or undefined . . .`);
 }
@@ -62,7 +62,7 @@ const closeHiScoresButton = document.querySelector('.close-hi-scores-button') as
 const closeGameOverButton = document.querySelector('.close-game-over-button') as HTMLButtonElement;
 const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as HTMLButtonElement;
 
-// dom checks
+// check validity of all declared dom elements
 const domElements: DomElement[] = [
   { snakeGameWrapper },
   { snakeBoard },
@@ -80,7 +80,7 @@ const domElements: DomElement[] = [
   { viewHiScoresButton },
 ];
 
-domElements.forEach((domElement: DomElement, i) => {
+domElements.forEach((domElement: DomElement, i: number): void => {
   const key: string = Object.keys(domElement)[0];
   if (!domElements[i][key]) throwDomError(key);
 });
@@ -103,19 +103,19 @@ const snake: SnakeSegment[] = [
   { x: 260, y: 180 },
 ];
 
-let pillColor = '#F00',
-keyClicked = false,
-running = false,
-loser = false,
-timeout = 100,
-points = 100,
-pillsEaten = 0,
-xVelocity = 10,
-yVelocity = 0,
-minutes = 0,
-seconds = 0,
-score = 0,
-hours = 0,
+let pillColor: string = '#F00',
+keyClicked: boolean = false,
+running: boolean = false,
+loser: boolean = false,
+timeout: number = 100,
+points: number = 100,
+pillsEaten: number = 0,
+xVelocity: number = 10,
+yVelocity: number = 0,
+minutes: number = 0,
+seconds: number = 0,
+score: number = 0,
+hours: number = 0,
 hiScores: Score[] = [],
 pillXValue: number,
 pillYValue: number,
@@ -131,10 +131,10 @@ const initialTableObject: ConsoleTable = {
 
 console.table(initialTableObject);
 
-const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | Error | void> => {
+const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> | never => {
   try {
-    const response = await fetch(url, options);
-    const parsedResponse = await response.json();
+    const response: Response = await fetch(url, options);
+    const parsedResponse:  Score[] | void = await response.json();
     return parsedResponse;
   } catch(err) {
     alert(err);
@@ -149,7 +149,7 @@ const toggleModal = (modal: HTMLElement): void => {
   modal.classList.toggle('hidden');
 }
 
-const populateHiScores = async (): Promise<void | Error> => {
+const populateHiScores = async (): Promise<void> | never => {
   if ('ontouchstart' in document.documentElement) {
     toggleModal(mobileNotSupportedModal);
     return;
@@ -171,8 +171,15 @@ const populateHiScores = async (): Promise<void | Error> => {
     const hiScoreRow = document.querySelector(`.table-data-${i}`) as HTMLElement;
     if (!hiScoreRow) throwDomError(`hiScoreRow ${i}`);
 
-    const pillOrPills: string = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
-    hiScoreRow.innerText = `${padNumber(i + 1)}. ${hiScore.name} - ${hiScore.score} - ${hiScore.time} - ${hiScore.pills_eaten} ${pillOrPills} eaten`;
+    const rowNumber: string = padNumber(i + 1);
+    const rowName: string = hiScore.name;
+    const rowScore: string = String(hiScore.score);
+    const rowTime: string = hiScore.time;
+    const rowPillOrPills: string = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
+    const rowPillsEaten: string = `${String(hiScore.pills_eaten)} ${rowPillOrPills} eaten`;
+    
+    const rowContent = `${rowNumber}. ${rowName} - ${rowScore} - ${rowTime} - ${rowPillsEaten}`;
+    hiScoreRow.innerText = rowContent;
   }
   startOrResetButton.disabled = false;
   viewInstructionsButton.disabled = false;
@@ -351,9 +358,8 @@ const checkForPillCollision = (head: SnakeSegment): boolean => {
   return false;
 }
 
-// update velocities based on keypresses
-// and make the snake can't back into
-// itself
+// update velocities based on keypresses and
+// make the snake can't back into itself
 const setVelocities = (e: KeyboardEvent): void => {
   if (!keyClicked) {
     keyClicked = true;
@@ -382,7 +388,7 @@ const insertScore = async (name: string): Promise<void> => {
     time,
     pills_eaten: pillsEaten,
   }
-  const options = {
+  const options: RequestOptions = {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {

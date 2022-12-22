@@ -26,7 +26,7 @@ const startOrResetButton = document.querySelector('.start-or-reset-game-button')
 const closeHiScoresButton = document.querySelector('.close-hi-scores-button');
 const closeGameOverButton = document.querySelector('.close-game-over-button');
 const viewHiScoresButton = document.querySelector('.view-hi-scores-button');
-// dom checks
+// check validity of all declared dom elements
 const domElements = [
     { snakeGameWrapper },
     { snakeBoard },
@@ -109,8 +109,14 @@ const populateHiScores = async () => {
         const hiScoreRow = document.querySelector(`.table-data-${i}`);
         if (!hiScoreRow)
             throwDomError(`hiScoreRow ${i}`);
-        const pillOrPills = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
-        hiScoreRow.innerText = `${padNumber(i + 1)}. ${hiScore.name} - ${hiScore.score} - ${hiScore.time} - ${hiScore.pills_eaten} ${pillOrPills} eaten`;
+        const rowNumber = padNumber(i + 1);
+        const rowName = hiScore.name;
+        const rowScore = String(hiScore.score);
+        const rowTime = hiScore.time;
+        const rowPillOrPills = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
+        const rowPillsEaten = `${String(hiScore.pills_eaten)} ${rowPillOrPills} eaten`;
+        const rowContent = `${rowNumber}. ${rowName} - ${rowScore} - ${rowTime} - ${rowPillsEaten}`;
+        hiScoreRow.innerText = rowContent;
     }
     startOrResetButton.disabled = false;
     viewInstructionsButton.disabled = false;
@@ -270,9 +276,8 @@ const checkForPillCollision = (head) => {
     }
     return false;
 };
-// update velocities based on keypresses
-// and make the snake can't back into
-// itself
+// update velocities based on keypresses and
+// make the snake can't back into itself
 const setVelocities = (e) => {
     if (!keyClicked) {
         keyClicked = true;
