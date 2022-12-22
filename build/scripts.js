@@ -1,16 +1,17 @@
 "use strict";
 // dom elements exist or error out
-const throwError = (identifier) => {
+const throwAlertAndError = (identifier) => {
     alert(`something is wrong with ${identifier}`);
     throw new Error(`something is wrong with ${identifier}`);
 };
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
 const snakeBoard = document.querySelector('.snake-game-canvas');
 if (!snakeBoard)
-    throwError('snakeBoard'); // validate canvas element
+    throwAlertAndError('snakeBoard'); // validate canvas element
 const snakeBoardContext = snakeBoard.getContext('2d');
 if (!snakeBoardContext)
-    throwError('snakeBoardContext'); // validate context element
+    throwAlertAndError('snakeBoardContext'); // validate context element
+// * all dom elements to be bulk verified:
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button');
@@ -27,8 +28,8 @@ const gameOverModal = document.querySelector('.game-over-modal');
 // targeted spans
 const finalScore = document.querySelector('.final-score');
 const timer = document.querySelector('.timer');
-// check validity of all declared dom elements
-const uncheckedDomElements = [
+// check validity of all unverified dom elements
+const unverifiedDomElements = [
     { snakeGameWrapper },
     { closeInstructionsButton },
     { viewInstructionsButton },
@@ -43,10 +44,10 @@ const uncheckedDomElements = [
     { finalScore },
     { timer },
 ];
-uncheckedDomElements.forEach((uncheckedDomElement, i) => {
-    const key = Object.keys(uncheckedDomElement)[0];
-    if (!uncheckedDomElements[i][key])
-        throwError(key);
+unverifiedDomElements.forEach((unverifiedDomElement, i) => {
+    const key = Object.keys(unverifiedDomElement)[0];
+    if (!unverifiedDomElements[i][key])
+        throwAlertAndError(key);
 });
 startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
 closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
@@ -80,7 +81,7 @@ const makeNetworkRequest = async (url, options) => {
         return parsedResponse;
     }
     catch (err) {
-        throwError('makeNetworkRequest');
+        throwAlertAndError('makeNetworkRequest');
     }
 };
 const padNumber = (number) => String(number).padStart(2, '0');
@@ -105,7 +106,7 @@ const populateHiScores = async () => {
             hiScores.push(hiScore);
             const hiScoreRow = document.querySelector(`.table-data-${i}`);
             if (!hiScoreRow)
-                throwError(`hiScoreRow ${i}`);
+                throwAlertAndError(`hiScoreRow ${i}`);
             const rowNumber = padNumber(i + 1);
             const rowName = hiScore.name;
             const rowScore = String(hiScore.score);

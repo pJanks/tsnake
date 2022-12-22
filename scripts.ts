@@ -1,5 +1,5 @@
 // dom elements exist or error out
-const throwError = (identifier: string): never => {
+const throwAlertAndError = (identifier: string): never => {
   alert(`something is wrong with ${identifier}`);
   throw new Error(`something is wrong with ${identifier}`);
 }
@@ -38,11 +38,12 @@ interface RequestOptions {
 
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
-if (!snakeBoard) throwError('snakeBoard'); // validate canvas element
+if (!snakeBoard) throwAlertAndError('snakeBoard'); // validate canvas element
 
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
-if (!snakeBoardContext) throwError('snakeBoardContext'); // validate context element
+if (!snakeBoardContext) throwAlertAndError('snakeBoardContext'); // validate context element
 
+// * all dom elements to be bulk verified:
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
 
 // buttons
@@ -63,8 +64,8 @@ const gameOverModal = document.querySelector('.game-over-modal') as HTMLElement;
 const finalScore = document.querySelector('.final-score') as HTMLElement;
 const timer = document.querySelector('.timer') as HTMLElement;
 
-// check validity of all declared dom elements
-const uncheckedDomElements: DomElement[] = [
+// check validity of all unverified dom elements
+const unverifiedDomElements: DomElement[] = [
   { snakeGameWrapper },
   { closeInstructionsButton },
   { viewInstructionsButton },
@@ -80,9 +81,9 @@ const uncheckedDomElements: DomElement[] = [
   { timer },
 ];
 
-uncheckedDomElements.forEach((uncheckedDomElement: DomElement, i: number): void => {
-  const key: string = Object.keys(uncheckedDomElement)[0];
-  if (!uncheckedDomElements[i][key]) throwError(key);
+unverifiedDomElements.forEach((unverifiedDomElement: DomElement, i: number): void => {
+  const key: string = Object.keys(unverifiedDomElement)[0];
+  if (!unverifiedDomElements[i][key]) throwAlertAndError(key);
 });
 
 startOrResetButton.addEventListener('click', (e: MouseEvent) => handleStartOrResetButtonClick(e));
@@ -137,7 +138,7 @@ const makeNetworkRequest = async (url: string, options?: RequestOptions): Promis
     const parsedResponse:  Score[] | void = await response.json();
     return parsedResponse;
   } catch(err) {
-    throwError('makeNetworkRequest');
+    throwAlertAndError('makeNetworkRequest');
   }
 }
 
@@ -148,7 +149,7 @@ const toggleModal = (modal: HTMLElement): void => {
   modal.classList.toggle('hidden');
 }
 
-const populateHiScores = async (): Promise<void> | never => {
+const populateHiScores = async (): Promise<void> => {
   if ('ontouchstart' in document.documentElement) {
     toggleModal(mobileNotSupportedModal);
     return;
@@ -166,7 +167,7 @@ const populateHiScores = async (): Promise<void> | never => {
       };
       hiScores.push(hiScore);
       const hiScoreRow = document.querySelector(`.table-data-${i}`) as HTMLElement;
-      if (!hiScoreRow) throwError(`hiScoreRow ${i}`);
+      if (!hiScoreRow) throwAlertAndError(`hiScoreRow ${i}`);
   
       const rowNumber: string = padNumber(i + 1);
       const rowName: string = hiScore.name;
