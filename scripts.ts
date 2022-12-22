@@ -31,16 +31,20 @@ interface RequestOptions {
   },
 }
 
-// if any check fails alert and throw error
+// if any validation check fails alert and throw error
 const throwAlertAndError = (identifier: string, method?: string): never => {
   const startingMessageFragment: string = `something is wrong with ${identifier}`;
   const endingMessageFragment: string = method ? `, method: ${method}..` : '..';
   const message: string = `${startingMessageFragment}${endingMessageFragment}`;
+  document.querySelectorAll('button').forEach((button: HTMLButtonElement) => {
+    button.disabled = true
+  });
 
   alert(message);
   throw new Error(message);
 }
 
+// * select and validate existing dom elements
 // validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
 if (!snakeGameWrapper) throwAlertAndError('snakeGameWrapper');
@@ -53,7 +57,6 @@ if (!snakeBoard) throwAlertAndError('snakeBoard');
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
 if (!snakeBoardContext) throwAlertAndError('snakeBoardContext');
 
-// * validate other existing dom elements
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
 const viewInstructionsButton = document.querySelector('.view-instructions-button') as HTMLButtonElement;
@@ -213,12 +216,6 @@ const populatePill = (x?: number, y?: number): void => {
     const possibleX: number = Math.random() * 60 + 5;
     const possibleY: number = Math.random() * 35 + 5;
     
-    // if coordinates are not within border recurse
-    if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345) {
-      populatePill();
-      return;
-    }
-    
     // if coordinates are on snake recurse
     snake.forEach((part: SnakeSegment) => {
       if (possibleX * 10 - part.x <= 5 && possibleX * 10 - part.x >= -5 && possibleY * 10 - part.y <= 5 && possibleY * 10 - part.y >= -5) {
@@ -226,6 +223,12 @@ const populatePill = (x?: number, y?: number): void => {
         return;
       }
     });
+    
+    // if coordinates are not within border recurse
+    if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345) {
+      populatePill();
+      return;
+    }
 
     // scale values to actual columns and rows
     pillXValue = Math.round(possibleX) * 10 + 5;

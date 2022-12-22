@@ -1,12 +1,16 @@
 "use strict";
-// if any check fails alert and throw error
+// if any validation check fails alert and throw error
 const throwAlertAndError = (identifier, method) => {
     const startingMessageFragment = `something is wrong with ${identifier}`;
     const endingMessageFragment = method ? `, method: ${method}..` : '..';
     const message = `${startingMessageFragment}${endingMessageFragment}`;
+    document.querySelectorAll('button').forEach((button) => {
+        button.disabled = true;
+    });
     alert(message);
     throw new Error(message);
 };
+// * select and validate existing dom elements
 // validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
 if (!snakeGameWrapper)
@@ -19,7 +23,6 @@ if (!snakeBoard)
 const snakeBoardContext = snakeBoard.getContext('2d');
 if (!snakeBoardContext)
     throwAlertAndError('snakeBoardContext');
-// * validate other existing dom elements
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button');
 const viewInstructionsButton = document.querySelector('.view-instructions-button');
@@ -145,11 +148,6 @@ const populatePill = (x, y) => {
         // add five to center the pill in the square on the grid
         const possibleX = Math.random() * 60 + 5;
         const possibleY = Math.random() * 35 + 5;
-        // if coordinates are not within border recurse
-        if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345) {
-            populatePill();
-            return;
-        }
         // if coordinates are on snake recurse
         snake.forEach((part) => {
             if (possibleX * 10 - part.x <= 5 && possibleX * 10 - part.x >= -5 && possibleY * 10 - part.y <= 5 && possibleY * 10 - part.y >= -5) {
@@ -157,6 +155,11 @@ const populatePill = (x, y) => {
                 return;
             }
         });
+        // if coordinates are not within border recurse
+        if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345) {
+            populatePill();
+            return;
+        }
         // scale values to actual columns and rows
         pillXValue = Math.round(possibleX) * 10 + 5;
         pillYValue = Math.round(possibleY) * 10 + 5;
