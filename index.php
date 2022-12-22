@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tsnake</title>
+    <title>.TSnake</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -14,14 +14,14 @@
           This game is not currently supported on touchscreen devices. I'm sorry :/
         </p>
         <span class="link-to-github-wrapper">
-          View the source code, or open an issue or PR on <a class="link-to-github" href="https://github.com/pJanks/snake" target="_blank"">Github</a>.
+          View the source code, or open an issue or PR on <a class="link-to-github" href="https://github.com/pJanks/tsnake" target="_blank"">Github</a>.
         </span>
       </section>
       <section class="snake-game-wrapper section-wrapper snake">
         <section class="heading-and-canvas-wrapper">
           <section class="snake-heading-and-timer-wrapper">
             <h4 class="snake-heading subheading">
-              SNAKE: RED && BLUE PILLS
+              .TSNAKE: RED && BLUE PILLS
             </h4>
             <span class="timer">00:00:00</span>
           </section>
@@ -35,7 +35,7 @@
           <button class="view-hi-scores-button game-button">High Scores</button>
         </section>
         <span class="link-to-github-wrapper">
-          View the source code, or open an issue or PR on <a class="link-to-github" href="https://github.com/pJanks/snake" target="_blank"">Github</a>.
+          View the source code, or open an issue or PR on <a class="link-to-github" href="https://github.com/pJanks/tsnake" target="_blank"">Github</a>.
         </span>
       </section>
       <section class="game-instructions-modal modal hidden">
@@ -44,7 +44,7 @@
         </p>
         <button class="close-instructions-button game-button">Close</button>
         <span class="link-to-github-wrapper">
-          View the source code, or open an issue or PR on <a class="link-to-github" href="https://github.com/pJanks/snake" target="_blank"">Github</a>.
+          View the source code, or open an issue or PR on <a class="link-to-github" href="https://github.com/pJanks/tsnake" target="_blank"">Github</a>.
         </span>
       </section>
       <section class="hi-scores-modal modal hidden">
@@ -89,7 +89,7 @@
         </table>
         <button class="close-hi-scores-button game-button">Close</button>
         <span class="link-to-github-wrapper">
-          View the source code, or open an issue or PR on <a class="link-to-github" href="https://github.com/pJanks/snake" target="_blank"">Github</a>.
+          View the source code, or open an issue or PR on <a class="link-to-github" href="https://github.com/pJanks/tsnake" target="_blank"">Github</a>.
         </span>
       </section>
       <section class ="game-over-modal modal hidden">
@@ -99,10 +99,10 @@
         </h2>
         <button class="close-game-over-button game-button">Close</button>
         <span class="link-to-github-wrapper">
-          View the source code, or open an issue or PR on <a class="link-to-github" href="https://github.com/pJanks/snake" target="_blank"">Github</a>.
+          View the source code, or open an issue or PR on <a class="link-to-github" href="https://github.com/pJanks/tsnake" target="_blank"">Github</a>.
         </span>
       </section>
     </main>
   </body>
-  <script src="build/scripts.js"></script>
+  <script src="build/scripts"></script>
 </html>
