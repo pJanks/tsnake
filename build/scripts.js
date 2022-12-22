@@ -60,7 +60,7 @@ unvalidatedDomElements.forEach((unvalidatedDomElement, i) => {
     if (!unvalidatedDomElements[i][key])
         throwAlertAndError(key);
 });
-// ? all elements are validated, add listeners
+// all elements validated, add listeners
 startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
 closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
 viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
@@ -77,7 +77,7 @@ const snake = [
     { x: 270, y: 180 },
     { x: 260, y: 180 },
 ];
-let pillColor = '#F00', keyClicked = false, running = false, loser = false, timeout = 100, points = 100, pillsEaten = 0, xVelocity = 10, yVelocity = 0, minutes = 0, seconds = 0, score = 0, hours = 0, hiScores = [], pillXValue, pillYValue, interval;
+let pillColor = '#F00', keyClicked = false, running = false, loser = false, hiScores = [], pillsEaten = 0, xVelocity = 10, yVelocity = 0, timeout = 100, points = 100, minutes = 0, seconds = 0, pillXValue, pillYValue, score = 0, hours = 0, interval;
 // print defaults
 const initialTableObject = {
     intervalRunsIn: `${timeout} ms`,
@@ -116,6 +116,7 @@ const populateHiScores = async () => {
                 pills_eaten: 0,
             };
             hiScores.push(hiScore);
+            // validate table rows on dom
             const hiScoreRow = document.querySelector(`.table-data-${i}`);
             if (!hiScoreRow)
                 throwAlertAndError(`hiScoreRow ${i}`);
@@ -146,12 +147,12 @@ const populatePill = (x, y) => {
         // add five to center the pill in the square on the grid
         const possibleX = Math.random() * 60 + 5;
         const possibleY = Math.random() * 35 + 5;
-        // if coordinates are not within border
+        // if coordinates are not within border recurse
         if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345) {
             populatePill();
             return;
         }
-        // if coordinates are on snake
+        // if coordinates are on snake recurse
         snake.forEach((part) => {
             if (possibleX * 10 - part.x <= 5 && possibleX * 10 - part.x >= -5 && possibleY * 10 - part.y <= 5 && possibleY * 10 - part.y >= -5) {
                 populatePill();
@@ -208,7 +209,7 @@ const runGame = async () => {
         toggleModal(gameOverModal);
         closeGameOverButton.focus();
         finalScore.innerText = String(score);
-        if (score >= hiScores[9].score) {
+        if (!hiScores[9] || score > hiScores[9].score) {
             const name = prompt(`
         Congrats, You\'ve scored in the top 10!!
         Please enter an identifier:
@@ -237,7 +238,7 @@ const clearCanvas = () => {
     snakeBoardContext.strokeRect(0, 0, snakeBoard.width, snakeBoard.height);
 };
 const moveSnake = () => {
-    // where the snake will be next
+    // next snake head coordinates
     const head = {
         x: snake[0].x + xVelocity,
         y: snake[0].y + yVelocity,
@@ -259,7 +260,7 @@ const moveSnake = () => {
 };
 const checkForTailCollision = (head) => {
     let collidedWithTail = false;
-    snake.forEach(part => {
+    snake.forEach((part) => {
         if (head.x === part.x && head.y === part.y) {
             collidedWithTail = true;
         }
