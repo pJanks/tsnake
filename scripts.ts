@@ -32,10 +32,11 @@ interface RequestOptions {
 }
 
 // if any validation check fails alert and throw error
-const throwAlertAndError = (identifier: string, method?: string): never => {
+const alertAndThrowError = (identifier: string, method?: string): never => {
   const startingMessageFragment: string = `something is wrong with ${identifier}`;
   const endingMessageFragment: string = method ? `, method: ${method}..` : '..';
   const message: string = `${startingMessageFragment}${endingMessageFragment}`;
+
   document.querySelectorAll('button').forEach((button: HTMLButtonElement) => {
     button.disabled = true
   });
@@ -45,19 +46,19 @@ const throwAlertAndError = (identifier: string, method?: string): never => {
 }
 
 // * select and validate existing dom elements
-// validate game wrapper
+// select and validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
-if (!snakeGameWrapper) throwAlertAndError('snakeGameWrapper');
+if (!snakeGameWrapper) alertAndThrowError('snakeGameWrapper');
 
-// validate canvas
+// select and validate canvas
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
-if (!snakeBoard) throwAlertAndError('snakeBoard');
+if (!snakeBoard) alertAndThrowError('snakeBoard');
 
-// validate context
+// select and validate context
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
-if (!snakeBoardContext) throwAlertAndError('snakeBoardContext');
+if (!snakeBoardContext) alertAndThrowError('snakeBoardContext');
 
-// buttons
+// select buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
 const viewInstructionsButton = document.querySelector('.view-instructions-button') as HTMLButtonElement;
 const startOrResetButton = document.querySelector('.start-or-reset-game-button') as HTMLButtonElement;
@@ -65,63 +66,55 @@ const closeHiScoresButton = document.querySelector('.close-hi-scores-button') as
 const closeGameOverButton = document.querySelector('.close-game-over-button') as HTMLButtonElement;
 const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as HTMLButtonElement;
 
-// modals
+// select modals
 const instructionsModal = document.querySelector('.game-instructions-modal') as HTMLElement;
 const mobileNotSupportedModal = document.querySelector('.mobile-modal') as HTMLElement;
 const hiScoresModal = document.querySelector('.hi-scores-modal') as HTMLElement;
 const gameOverModal = document.querySelector('.game-over-modal') as HTMLElement;
 
-// spans
+// select spans
 const finalScore = document.querySelector('.final-score') as HTMLElement;
 const timer = document.querySelector('.timer') as HTMLElement;
 
 const unvalidatedDomElements: DomElement[] = [
-  // buttons
+  // buttons to validate
   { closeInstructionsButton },
   { viewInstructionsButton },
   { closeHiScoresButton },
   { closeGameOverButton },
   { startOrResetButton },
   { viewHiScoresButton },
-  // modals
+  // modals to validate
   { mobileNotSupportedModal },
   { instructionsModal },
   { hiScoresModal },
   { gameOverModal },
-  // spans
+  // spans to validate
   { finalScore },
   { timer },
 ];
 
+// validate remaining elements
 unvalidatedDomElements.forEach((unvalidatedDomElement: DomElement, i: number): void => {
   const key: string = Object.keys(unvalidatedDomElement)[0];
-  if (!unvalidatedDomElements[i][key]) throwAlertAndError(key);
+  if (!unvalidatedDomElements[i][key]) alertAndThrowError(key);
 });
 
 // all elements validated, add listeners
 startOrResetButton.addEventListener('click', (e: MouseEvent) => handleStartOrResetButtonClick(e));
 closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
 viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
-closeHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
 closeGameOverButton.addEventListener('click', () => toggleModal(gameOverModal));
+closeHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
 viewHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
 snakeBoard.addEventListener('keydown', (e: KeyboardEvent) => setVelocities(e));
 snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
 
-// snake
-const snake: SnakeSegment[] = [
-  { x: 300, y: 180 },
-  { x: 290, y: 180 },
-  { x: 280, y: 180 },
-  { x: 270, y: 180 },
-  { x: 260, y: 180 },
-];
-
+// nonconstant global variables
 let pillColor: string = '#F00',
 keyClicked: boolean = false,
 running: boolean = false,
 loser: boolean = false,
-hiScores: Score[] = [],
 pillsEaten: number = 0,
 xVelocity: number = 10,
 yVelocity: number = 0,
@@ -134,6 +127,16 @@ hours: number = 0,
 pillXValue: number,
 pillYValue: number,
 interval: number;
+
+const snake: SnakeSegment[] = [
+  { x: 300, y: 180 },
+  { x: 290, y: 180 },
+  { x: 280, y: 180 },
+  { x: 270, y: 180 },
+  { x: 260, y: 180 },
+];
+
+const hiScores: Score[] = [];
 
 // print defaults
 const initialTableObject: ConsoleTable = {
@@ -150,7 +153,7 @@ const makeNetworkRequest = async (url: string, options?: RequestOptions): Promis
     const parsedResponse:  Score[] | void = await response.json();
     return parsedResponse;
   } catch(err) {
-    throwAlertAndError('makeNetworkRequest', options?.method ?? 'GET');
+    alertAndThrowError('makeNetworkRequest', options?.method ?? 'GET');
   }
 }
 
@@ -170,19 +173,20 @@ const populateHiScores = async (): Promise<void> => {
   const getScoresResponse: Score[] | void = await makeNetworkRequest('backend/get_scores.php');
 
   if (Array.isArray(getScoresResponse)) {
+    const emptyScore = {
+      name: 'EMPTY',
+      score: 0,
+      time: '00:00:00',
+      pills_eaten: 0,
+    };
     let i: number = 0;
     for (i; i < 10; i++) {
-      const hiScore: Score = getScoresResponse[i] ?? {
-        name: 'EMPTY',
-        score: 0,
-        time: '00:00:00',
-        pills_eaten: 0,
-      };
+      const hiScore: Score = getScoresResponse[i] ?? emptyScore;
       hiScores.push(hiScore);
 
-      // validate table rows on dom
+      // select and validate table rows on dom
       const hiScoreRow = document.querySelector(`.table-data-${i}`) as HTMLElement;
-      if (!hiScoreRow) throwAlertAndError(`hiScoreRow ${i}`);
+      if (!hiScoreRow) alertAndThrowError(`hiScoreRow ${i}`);
   
       const rowNumber: string = padNumber(i + 1);
       const rowName: string = hiScore.name;
@@ -209,6 +213,7 @@ const drawSnake = (): void => {
 }
 
 const populatePill = (x?: number, y?: number): void => {
+  let pillIsOnOrAroundSnake: boolean = false;
   if (!x || !y) {
 
     // get random coordinates on the canvas for pill placement
@@ -219,13 +224,12 @@ const populatePill = (x?: number, y?: number): void => {
     // if coordinates are on snake recurse
     snake.forEach((part: SnakeSegment) => {
       if (possibleX * 10 - part.x <= 5 && possibleX * 10 - part.x >= -5 && possibleY * 10 - part.y <= 5 && possibleY * 10 - part.y >= -5) {
-        populatePill();
-        return;
+        pillIsOnOrAroundSnake = true;
       }
     });
     
     // if coordinates are not within border recurse
-    if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345) {
+    if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345 || pillIsOnOrAroundSnake) {
       populatePill();
       return;
     }
