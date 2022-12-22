@@ -36,7 +36,8 @@ interface RequestOptions {
   },
 }
 
-// gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
+// gameboard dimensions are 600px x 350px
+// each snake segment is 10px x 10px
 
 // validate game wrapper element
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
