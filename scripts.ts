@@ -35,8 +35,10 @@ interface RequestOptions {
 const throwAlertAndError = (identifier: string, method?: string): never => {
   const startingMessageFragment: string = `something is wrong with ${identifier}`;
   const possibleEndingMessageFragment: string = method ? `, method: ${method}` : '';
-  alert(`${startingMessageFragment}${possibleEndingMessageFragment}`);
-  throw new Error(`${startingMessageFragment}${possibleEndingMessageFragment}`);
+  const message: string = `${startingMessageFragment}${possibleEndingMessageFragment}`;
+  
+  alert(message);
+  throw new Error(message);
 }
 
 // validate game wrapper

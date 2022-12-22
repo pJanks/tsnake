@@ -4,8 +4,9 @@
 const throwAlertAndError = (identifier, method) => {
     const startingMessageFragment = `something is wrong with ${identifier}`;
     const possibleEndingMessageFragment = method ? `, method: ${method}` : '';
-    alert(`${startingMessageFragment}${possibleEndingMessageFragment}`);
-    throw new Error(`${startingMessageFragment}${possibleEndingMessageFragment}`);
+    const message = `${startingMessageFragment}${possibleEndingMessageFragment}`;
+    alert(message);
+    throw new Error(message);
 };
 // validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
