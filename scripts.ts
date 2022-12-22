@@ -1,3 +1,9 @@
+// dom elements exist or error out
+const throwDomError = (elementName: string): never => {
+  alert(`${elementName}: null or undefined . . .`);
+  throw Error(`${elementName}: null or undefined . . .`);
+}
+
 // interfaces, obvoiusly..
 interface DomElement {
   [domElementName: string]: HTMLElement | CanvasRenderingContext2D | HTMLButtonElement
@@ -28,12 +34,6 @@ interface RequestOptions {
   headers: {
     'content-type': string,
   },
-}
-
-// dom elements exist or error out
-const throwDomError = (elementName: string): never => {
-  alert(`${elementName}: null or undefined . . .`);
-  throw Error(`${elementName}: null or undefined . . .`);
 }
 
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
