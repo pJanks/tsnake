@@ -1,3 +1,4 @@
+// dom elements exist or error
 const throwDomError = (element: string): Error => {
   alert(`${element}: null or undefined . . .`);
   throw Error (`${element}: null or undefined . . .`);
@@ -7,7 +8,7 @@ const throwDomError = (element: string): Error => {
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
 
-// check for board
+// check for board to get context
 if (!snakeBoard) throwDomError('snakeBoard');
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
 
@@ -29,19 +30,19 @@ const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as H
 const finalScore = document.querySelector('.final-score') as HTMLElement;
 const timer = document.querySelector('.timer') as HTMLElement;
 
-// check all dom elements exist
-if (!snakeGameWrapper) throwDomError('snakeGameWrapper');
-if (!snakeBoardContext) throwDomError('snakeBoardContext');
-if (!instructionsModal) throwDomError('instructionsModal');
+// dom checks
 if (!mobileNotSupportedModal) throwDomError('mobileNotSupportedModal');
-if (!hiScoresModal) throwDomError('hiScoresModal');
-if (!gameOverModal) throwDomError('gameOverModal');
 if (!closeInstructionsButton) throwDomError('closeInstructionsButton');
 if (!viewInstructionsButton) throwDomError('viewInstructionsButton');
-if (!startOrResetButton) throwDomError('startOrResetButton');
 if (!closeHiScoresButton) throwDomError('closeHiScoresButton');
 if (!closeGameOverButton) throwDomError('closeGameOverButton');
+if (!startOrResetButton) throwDomError('startOrResetButton');
 if (!viewHiScoresButton) throwDomError('viewHiScoresButton');
+if (!snakeBoardContext) throwDomError('snakeBoardContext');
+if (!instructionsModal) throwDomError('instructionsModal');
+if (!snakeGameWrapper) throwDomError('snakeGameWrapper');
+if (!hiScoresModal) throwDomError('hiScoresModal');
+if (!gameOverModal) throwDomError('gameOverModal');
 if (!finalScore) throwDomError('finalScore');
 if (!timer) throwDomError('timer');
 
@@ -51,7 +52,6 @@ startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClic
 closeHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
 closeGameOverButton.addEventListener('click', () => toggleModal(gameOverModal));
 viewHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
-
 snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
 snakeBoard.addEventListener('keydown', (e) => setVelocities(e));
 
@@ -92,18 +92,18 @@ const snake: SnakeSegment[] = [
 ];
 
 let pillColor = '#F00',
+keyClicked = false,
 running = false,
 loser = false,
-score = 0,
 timeout = 100,
 points = 100,
-keyClicked = false,
 pillsEaten = 0,
-hours = 0,
-minutes = 0,
-seconds = 0,
 xVelocity = 10,
 yVelocity = 0,
+minutes = 0,
+seconds = 0,
+score = 0,
+hours = 0,
 hiScores: Score[] = [],
 pillXValue: number,
 pillYValue: number,
@@ -171,11 +171,8 @@ const drawSnake = (): void => {
   });
 }
 
-// * this fn is probably very inefficient
-// * especially if many spots on the board
-// * are occupied
-const populatePill = async (x?: number, y?: number): Promise<void> => {
-  let pillIsOnOrAroundSnake = false;
+const populatePill = (x?: number, y?: number): void => {
+  let pillIsInvalid = false;
   if (!x || !y) {
 
     // get random 10x10 blocks on the canvas for pill placement
@@ -186,12 +183,16 @@ const populatePill = async (x?: number, y?: number): Promise<void> => {
     // make sure the random coordinates are not on top of the snake
     snake.forEach(part => {
       if (possibleX * 10 - part.x <= 5 && possibleX * 10 - part.x >= -5 && possibleY * 10 - part.y <= 5 && possibleY * 10 - part.y >= -5) {
-        pillIsOnOrAroundSnake = true;
+        pillIsInvalid = true;
       }
     });
-
+    
     // make sure random coordinates are not off the border
-    if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345 || pillIsOnOrAroundSnake) {
+    if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345) {
+      pillIsInvalid = true;
+    }
+
+    if (pillIsInvalid) {
       populatePill();
       return;
     }
