@@ -39,19 +39,19 @@ interface RequestOptions {
 // gameboard dimensions are 600px x 350px
 // each snake segment is 10px x 10px
 
-// validate game wrapper element
+// validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
 if (!snakeGameWrapper) {
   throwAlertAndError('snakeGameWrapper');
 }
 
-// validate canvas element
+// validate canvas
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
 if (!snakeBoard) {
   throwAlertAndError('snakeBoard');
 }
 
-// validate context element
+// validate context
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
 if (!snakeBoardContext) {
   throwAlertAndError('snakeBoardContext');
