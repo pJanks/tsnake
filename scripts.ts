@@ -37,14 +37,13 @@ interface RequestOptions {
 }
 
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
-const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
-if (!snakeGameWrapper) throwDomError('snakeGameWrapper'); // validate game wrapper
-
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
 if (!snakeBoard) throwDomError('snakeBoard'); // validate canvas element
 
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
 if (!snakeBoardContext) throwDomError('snakeBoardContext'); // validate context element
+
+const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
 
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
@@ -66,6 +65,7 @@ const timer = document.querySelector('.timer') as HTMLElement;
 
 // check validity of all declared dom elements
 const uncheckedDomElements: DomElement[] = [
+  { snakeGameWrapper },
   { closeInstructionsButton },
   { viewInstructionsButton },
   { closeHiScoresButton },
