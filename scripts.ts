@@ -155,9 +155,9 @@ const populateHiScores = async (): Promise<void> => {
     const hiScoreRow = document.querySelector(`.table-data-${i}`) as HTMLElement;
     if (!hiScoreRow) throwDomError(`hiScoreRow ${i}`);
 
-    hiScoreRow.innerText = `${padNumber(i + 1)}. ${hiScore.name} - ${hiScore.score} - ${hiScore.time} - ${hiScore.pills_eaten} pills eaten`;
+    const pillOrPills: string = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
+    hiScoreRow.innerText = `${padNumber(i + 1)}. ${hiScore.name} - ${hiScore.score} - ${hiScore.time} - ${hiScore.pills_eaten} ${pillOrPills} eaten`;
   }
-  
   startOrResetButton.disabled = false;
   viewInstructionsButton.disabled = false;
   viewHiScoresButton.disabled = false;
@@ -315,14 +315,16 @@ const checkForTailCollision = (head: SnakeSegment): boolean => {
 }
 
 const checkForPillCollision = (head: SnakeSegment): boolean => {
-  if (head.x + 5 === pillXValue && head.y + 5 === pillYValue) {
+  if ((xVelocity && head.x + 5 === pillXValue) && head.y + 5 === pillYValue || (yVelocity && head.y + 5 === pillYValue) && head.x + 5 === pillXValue) {
 
     pillColor === '#F00' ? pillColor = '#00F' : pillColor = '#F00';
-    timeout = Number((timeout - .04).toFixed(2));
+
     snake.unshift(head);
+
     score += points;
-    pillsEaten++;
     points++;
+    pillsEaten++;
+    timeout = Number((timeout - .04).toFixed(2));
 
     const updatedScoreDetails: ConsoleTable = {
       intervalRunsIn: `${timeout} ms`,
@@ -360,13 +362,14 @@ const setVelocities = (e: KeyboardEvent): void => {
 
 const insertScore = async (name: string): Promise<void> => {
   const time = timer.innerText;
+  console.log(pillsEaten);
   const body: Score = {
-    score,
     name,
+    score,
     time,
     pills_eaten: pillsEaten,
   }
-  const options: RequestOptions = {
+  const options = {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {

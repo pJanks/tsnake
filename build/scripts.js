@@ -111,7 +111,8 @@ const populateHiScores = async () => {
         const hiScoreRow = document.querySelector(`.table-data-${i}`);
         if (!hiScoreRow)
             throwDomError(`hiScoreRow ${i}`);
-        hiScoreRow.innerText = `${padNumber(i + 1)}. ${hiScore.name} - ${hiScore.score} - ${hiScore.time} - ${hiScore.pills_eaten} pills eaten`;
+        const pillOrPills = hiScore.pills_eaten === 1 ? 'pill' : 'pills';
+        hiScoreRow.innerText = `${padNumber(i + 1)}. ${hiScore.name} - ${hiScore.score} - ${hiScore.time} - ${hiScore.pills_eaten} ${pillOrPills} eaten`;
     }
     startOrResetButton.disabled = false;
     viewInstructionsButton.disabled = false;
@@ -256,7 +257,7 @@ const checkForTailCollision = (head) => {
     return collidedWithTail;
 };
 const checkForPillCollision = (head) => {
-    if (head.x + 5 === pillXValue && head.y + 5 === pillYValue) {
+    if ((xVelocity && head.x + 5 === pillXValue) && head.y + 5 === pillYValue || (yVelocity && head.y + 5 === pillYValue) && head.x + 5 === pillXValue) {
         pillColor === '#F00' ? pillColor = '#00F' : pillColor = '#F00';
         snake.unshift(head);
         score += points;
@@ -300,9 +301,10 @@ const setVelocities = (e) => {
 };
 const insertScore = async (name) => {
     const time = timer.innerText;
+    console.log(pillsEaten);
     const body = {
-        score,
         name,
+        score,
         time,
         pills_eaten: pillsEaten,
     };

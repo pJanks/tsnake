@@ -9,20 +9,21 @@
     $score = $scoreData->score;
     $name = $scoreData->name;
     $time = $scoreData->time;
-    $pillsEaten = $scoreData->pillsEaten;
+    $pills_eaten = $scoreData->pills_eaten;
     
     $sql = 'INSERT INTO scores (score, name, time, pills_eaten) VALUES (:score, :name, :time, :pills_eaten)';
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':score', $score);
     $stmt->bindParam(':name', $name);
     $stmt->bindParam(':time', $time);
-    $stmt->bindParam(':pills_eaten', $pillsEaten);
+    $stmt->bindParam(':pills_eaten', $pills_eaten);
     $stmt->execute();
 
     $successMessage = "$formattedDate inserted into scores\n";
     
     file_put_contents('../logs/log.log', $successMessage, FILE_APPEND);
-    echo json_encode(['success' => true]);
+    // echo json_encode(['success' => true]);
+    echo json_encode(['pills_eaten' => $pills_eaten]);
     unset($stmt);
     unset($pdo);
   } catch(PDOException $e) {
