@@ -42,6 +42,14 @@ const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasEle
 if (!snakeBoard) throwDomError('snakeBoard'); // validate gameboard
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
 
+// buttons
+const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
+const viewInstructionsButton = document.querySelector('.view-instructions-button') as HTMLButtonElement;
+const startOrResetButton = document.querySelector('.start-or-reset-game-button') as HTMLButtonElement;
+const closeHiScoresButton = document.querySelector('.close-hi-scores-button') as HTMLButtonElement;
+const closeGameOverButton = document.querySelector('.close-game-over-button') as HTMLButtonElement;
+const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as HTMLButtonElement;
+
 // modals
 const instructionsModal = document.querySelector('.game-instructions-modal') as HTMLElement;
 const mobileNotSupportedModal = document.querySelector('.mobile-modal') as HTMLElement;
@@ -52,29 +60,21 @@ const gameOverModal = document.querySelector('.game-over-modal') as HTMLElement;
 const finalScore = document.querySelector('.final-score') as HTMLElement;
 const timer = document.querySelector('.timer') as HTMLElement;
 
-// buttons
-const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
-const viewInstructionsButton = document.querySelector('.view-instructions-button') as HTMLButtonElement;
-const startOrResetButton = document.querySelector('.start-or-reset-game-button') as HTMLButtonElement;
-const closeHiScoresButton = document.querySelector('.close-hi-scores-button') as HTMLButtonElement;
-const closeGameOverButton = document.querySelector('.close-game-over-button') as HTMLButtonElement;
-const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as HTMLButtonElement;
-
 // check validity of all declared dom elements
 const domElements: DomElement[] = [
   { snakeGameWrapper },
-  { instructionsModal },
+  { closeInstructionsButton },
+  { viewInstructionsButton },
+  { closeHiScoresButton },
+  { closeGameOverButton },
+  { startOrResetButton },
+  { viewHiScoresButton },
   { mobileNotSupportedModal },
+  { instructionsModal },
   { hiScoresModal },
   { gameOverModal },
   { finalScore },
   { timer },
-  { closeInstructionsButton },
-  { viewInstructionsButton },
-  { startOrResetButton },
-  { closeHiScoresButton },
-  { closeGameOverButton },
-  { viewHiScoresButton },
 ];
 
 domElements.forEach((domElement: DomElement, i: number): void => {

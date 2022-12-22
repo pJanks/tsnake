@@ -10,6 +10,13 @@ const snakeBoard = document.querySelector('.snake-game-canvas');
 if (!snakeBoard)
     throwDomError('snakeBoard'); // validate gameboard
 const snakeBoardContext = snakeBoard.getContext('2d');
+// buttons
+const closeInstructionsButton = document.querySelector('.close-instructions-button');
+const viewInstructionsButton = document.querySelector('.view-instructions-button');
+const startOrResetButton = document.querySelector('.start-or-reset-game-button');
+const closeHiScoresButton = document.querySelector('.close-hi-scores-button');
+const closeGameOverButton = document.querySelector('.close-game-over-button');
+const viewHiScoresButton = document.querySelector('.view-hi-scores-button');
 // modals
 const instructionsModal = document.querySelector('.game-instructions-modal');
 const mobileNotSupportedModal = document.querySelector('.mobile-modal');
@@ -18,28 +25,21 @@ const gameOverModal = document.querySelector('.game-over-modal');
 // targeted spans
 const finalScore = document.querySelector('.final-score');
 const timer = document.querySelector('.timer');
-// buttons
-const closeInstructionsButton = document.querySelector('.close-instructions-button');
-const viewInstructionsButton = document.querySelector('.view-instructions-button');
-const startOrResetButton = document.querySelector('.start-or-reset-game-button');
-const closeHiScoresButton = document.querySelector('.close-hi-scores-button');
-const closeGameOverButton = document.querySelector('.close-game-over-button');
-const viewHiScoresButton = document.querySelector('.view-hi-scores-button');
 // check validity of all declared dom elements
 const domElements = [
     { snakeGameWrapper },
-    { instructionsModal },
+    { closeInstructionsButton },
+    { viewInstructionsButton },
+    { closeHiScoresButton },
+    { closeGameOverButton },
+    { startOrResetButton },
+    { viewHiScoresButton },
     { mobileNotSupportedModal },
+    { instructionsModal },
     { hiScoresModal },
     { gameOverModal },
     { finalScore },
     { timer },
-    { closeInstructionsButton },
-    { viewInstructionsButton },
-    { startOrResetButton },
-    { closeHiScoresButton },
-    { closeGameOverButton },
-    { viewHiScoresButton },
 ];
 domElements.forEach((domElement, i) => {
     const key = Object.keys(domElement)[0];
