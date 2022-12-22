@@ -5,16 +5,22 @@ const throwAlertAndError = (identifier) => {
     throw new Error(`something is wrong with ${identifier}`);
 };
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
+// validate game wrapper element
+const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
+if (!snakeGameWrapper) {
+    throwAlertAndError('snakeGameWrapper');
+}
+// validate canvas element
 const snakeBoard = document.querySelector('.snake-game-canvas');
 if (!snakeBoard) {
-    throwAlertAndError('snakeBoard'); // validate canvas element
+    throwAlertAndError('snakeBoard');
 }
+// validate context element
 const snakeBoardContext = snakeBoard.getContext('2d');
 if (!snakeBoardContext) {
-    throwAlertAndError('snakeBoardContext'); // validate context element
+    throwAlertAndError('snakeBoardContext');
 }
-// * all dom elements to be bulk verified:
-const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
+// * declare all other dom elements to be verified
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button');
 const viewInstructionsButton = document.querySelector('.view-instructions-button');
@@ -32,7 +38,6 @@ const finalScore = document.querySelector('.final-score');
 const timer = document.querySelector('.timer');
 // check validity of all unverified dom elements
 const unverifiedDomElements = [
-    { snakeGameWrapper },
     { closeInstructionsButton },
     { viewInstructionsButton },
     { closeHiScoresButton },

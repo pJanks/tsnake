@@ -37,19 +37,26 @@ interface RequestOptions {
 }
 
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
+
+// validate game wrapper element
+const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
+if (!snakeGameWrapper) {
+  throwAlertAndError('snakeGameWrapper');
+}
+
+// validate canvas element
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
 if (!snakeBoard) {
-  throwAlertAndError('snakeBoard'); // validate canvas element
+  throwAlertAndError('snakeBoard');
 }
 
+// validate context element
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
 if (!snakeBoardContext) {
-  throwAlertAndError('snakeBoardContext'); // validate context element
+  throwAlertAndError('snakeBoardContext');
 }
 
-// * all dom elements to be bulk verified:
-const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
-
+// * declare all other dom elements to be verified
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
 const viewInstructionsButton = document.querySelector('.view-instructions-button') as HTMLButtonElement;
@@ -70,7 +77,6 @@ const timer = document.querySelector('.timer') as HTMLElement;
 
 // check validity of all unverified dom elements
 const unverifiedDomElements: DomElement[] = [
-  { snakeGameWrapper },
   { closeInstructionsButton },
   { viewInstructionsButton },
   { closeHiScoresButton },
@@ -136,7 +142,7 @@ const initialTableObject: ConsoleTable = {
 
 console.table(initialTableObject);
 
-const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> | never => {
+const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> => {
   try {
     const response: Response = await fetch(url, options);
     const parsedResponse:  Score[] | void = await response.json();
