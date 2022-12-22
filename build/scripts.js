@@ -84,7 +84,6 @@ const toggleModal = (modal) => {
     modal.classList.toggle('hidden');
 };
 const populateHiScores = async () => {
-    var _a;
     if ('ontouchstart' in document.documentElement) {
         toggleModal(mobileNotSupportedModal);
         return;
@@ -97,7 +96,7 @@ const populateHiScores = async () => {
     }
     hiScores = getScoresResponse;
     for (let i = 0; i < 10; i++) {
-        const hiScore = (_a = hiScores[i]) !== null && _a !== void 0 ? _a : {
+        const hiScore = hiScores[i] ?? {
             name: 'EMPTY',
             score: 0,
             time: '00:00:00',
@@ -121,7 +120,6 @@ const drawSnake = () => {
     });
 };
 const populatePill = (x, y) => {
-    let pillIsInvalid = false;
     if (!x || !y) {
         // get random coordinates on the canvas for pill placement
         // add five to center the pill in the square on the grid

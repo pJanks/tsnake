@@ -185,7 +185,6 @@ const drawSnake = (): void => {
 }
 
 const populatePill = (x?: number, y?: number): void => {
-  let pillIsInvalid = false;
   if (!x || !y) {
 
     // get random coordinates on the canvas for pill placement
@@ -355,7 +354,7 @@ const checkForPillCollision = (head: SnakeSegment): boolean => {
 const setVelocities = (e: KeyboardEvent): void => {
   if (!keyClicked) {
     keyClicked = true;
-    const key = e.key.toLowerCase()
+    const key = e.key.toLowerCase();
     if (!xVelocity && key === 'a' || key === 'arrowleft') {
       xVelocity = -10;
       yVelocity = 0;
