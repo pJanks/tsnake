@@ -5,15 +5,13 @@ const throwDomError = (elementName) => {
     throw Error(`${elementName}: null or undefined . . .`);
 };
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
-const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
-if (!snakeGameWrapper)
-    throwDomError('snakeGameWrapper'); // validate game wrapper
 const snakeBoard = document.querySelector('.snake-game-canvas');
 if (!snakeBoard)
     throwDomError('snakeBoard'); // validate canvas element
 const snakeBoardContext = snakeBoard.getContext('2d');
 if (!snakeBoardContext)
     throwDomError('snakeBoardContext'); // validate context element
+const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button');
 const viewInstructionsButton = document.querySelector('.view-instructions-button');
@@ -31,6 +29,7 @@ const finalScore = document.querySelector('.final-score');
 const timer = document.querySelector('.timer');
 // check validity of all declared dom elements
 const uncheckedDomElements = [
+    { snakeGameWrapper },
     { closeInstructionsButton },
     { viewInstructionsButton },
     { closeHiScoresButton },
