@@ -31,9 +31,9 @@ interface RequestOptions {
 }
 
 // dom elements exist or error out
-const throwDomError = (element: string): Error => {
-  alert(`${element}: null or undefined . . .`);
-  throw Error(`${element}: null or undefined . . .`);
+const throwDomError = (elementName: string): Error => {
+  alert(`${elementName}: null or undefined . . .`);
+  throw Error(`${elementName}: null or undefined . . .`);
 }
 
 // gameboard: dimensions are 600px x 350px each snake piece is 10px x 10px
@@ -131,10 +131,15 @@ const initialTableObject: ConsoleTable = {
 
 console.table(initialTableObject);
 
-const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> => {
-  const response = await fetch(url, options);
-  const parsedResponse = await response.json();
-  return parsedResponse;
+const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | Error | void> => {
+  try {
+    const response = await fetch(url, options);
+    const parsedResponse = await response.json();
+    return parsedResponse;
+  } catch(err) {
+    alert(err);
+    throw err;
+  }
 }
 
 const padNumber = (number: number): string => String(number).padStart(2, '0');
@@ -144,7 +149,7 @@ const toggleModal = (modal: HTMLElement): void => {
   modal.classList.toggle('hidden');
 }
 
-const populateHiScores = async (): Promise<void> => {
+const populateHiScores = async (): Promise<void | Error> => {
   if ('ontouchstart' in document.documentElement) {
     toggleModal(mobileNotSupportedModal);
     return;
@@ -152,9 +157,7 @@ const populateHiScores = async (): Promise<void> => {
 
   const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
   if (!Array.isArray(getScoresResponse)) {
-    console.error('there was an error with the getScoresResponse . . .');
-    alert('there was an error with the getScoresResponse . . .');
-    return;
+    throw Error('something is wrong with getScoresResponse . . .')
   }
 
   hiScores = getScoresResponse;

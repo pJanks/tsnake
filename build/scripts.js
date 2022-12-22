@@ -1,8 +1,8 @@
 "use strict";
 // dom elements exist or error out
-const throwDomError = (element) => {
-    alert(`${element}: null or undefined . . .`);
-    throw Error(`${element}: null or undefined . . .`);
+const throwDomError = (elementName) => {
+    alert(`${elementName}: null or undefined . . .`);
+    throw Error(`${elementName}: null or undefined . . .`);
 };
 // gameboard: dimensions are 600px x 350px each snake piece is 10px x 10px
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
@@ -74,9 +74,15 @@ const initialTableObject = {
 };
 console.table(initialTableObject);
 const makeNetworkRequest = async (url, options) => {
-    const response = await fetch(url, options);
-    const parsedResponse = await response.json();
-    return parsedResponse;
+    try {
+        const response = await fetch(url, options);
+        const parsedResponse = await response.json();
+        return parsedResponse;
+    }
+    catch (err) {
+        alert(err);
+        throw err;
+    }
 };
 const padNumber = (number) => String(number).padStart(2, '0');
 const toggleModal = (modal) => {
@@ -90,9 +96,7 @@ const populateHiScores = async () => {
     }
     const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
     if (!Array.isArray(getScoresResponse)) {
-        console.error('there was an error with the getScoresResponse . . .');
-        alert('there was an error with the getScoresResponse . . .');
-        return;
+        throw Error('something is wrong with getScoresResponse . . .');
     }
     hiScores = getScoresResponse;
     for (let i = 0; i < 10; i++) {
