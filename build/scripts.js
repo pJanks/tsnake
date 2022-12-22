@@ -1,27 +1,28 @@
 "use strict";
-// everything works or errors out
-const throwAlertAndError = (identifier) => {
-    alert(`something is wrong with ${identifier}`);
-    throw new Error(`something is wrong with ${identifier}`);
+// alert and error out
+const throwAlertAndError = (identifier, method) => {
+    const message = method ? `something is wrong with ${identifier}` : `something is wrong with ${identifier} with method ${method}`;
+    alert(message);
+    throw new Error(message);
 };
 // gameboard dimensions are 600px x 350px
 // each snake segment is 10px x 10px
-// validate game wrapper element
+// validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
 if (!snakeGameWrapper) {
     throwAlertAndError('snakeGameWrapper');
 }
-// validate canvas element
+// validate canvas
 const snakeBoard = document.querySelector('.snake-game-canvas');
 if (!snakeBoard) {
     throwAlertAndError('snakeBoard');
 }
-// validate context element
+// validate context
 const snakeBoardContext = snakeBoard.getContext('2d');
 if (!snakeBoardContext) {
     throwAlertAndError('snakeBoardContext');
 }
-// * declare all other dom elements to be verified
+// ? declare and validate other existing dom elements
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button');
 const viewInstructionsButton = document.querySelector('.view-instructions-button');
@@ -34,29 +35,32 @@ const instructionsModal = document.querySelector('.game-instructions-modal');
 const mobileNotSupportedModal = document.querySelector('.mobile-modal');
 const hiScoresModal = document.querySelector('.hi-scores-modal');
 const gameOverModal = document.querySelector('.game-over-modal');
-// targeted spans
+// spans
 const finalScore = document.querySelector('.final-score');
 const timer = document.querySelector('.timer');
-// check validity of all unverified dom elements
-const unverifiedDomElements = [
+const unvalidatedDomElements = [
+    // buttons
     { closeInstructionsButton },
     { viewInstructionsButton },
     { closeHiScoresButton },
     { closeGameOverButton },
     { startOrResetButton },
     { viewHiScoresButton },
+    // modals
     { mobileNotSupportedModal },
     { instructionsModal },
     { hiScoresModal },
     { gameOverModal },
+    // spans
     { finalScore },
     { timer },
 ];
-unverifiedDomElements.forEach((unverifiedDomElement, i) => {
-    const key = Object.keys(unverifiedDomElement)[0];
-    if (!unverifiedDomElements[i][key])
+unvalidatedDomElements.forEach((unvalidatedDomElement, i) => {
+    const key = Object.keys(unvalidatedDomElement)[0];
+    if (!unvalidatedDomElements[i][key])
         throwAlertAndError(key);
 });
+// ? all elements are validated, add listeners
 startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
 closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
 viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
@@ -89,7 +93,7 @@ const makeNetworkRequest = async (url, options) => {
         return parsedResponse;
     }
     catch (err) {
-        throwAlertAndError('makeNetworkRequest');
+        throwAlertAndError('makeNetworkRequest', options?.method ?? 'GET');
     }
 };
 const padNumber = (number) => String(number).padStart(2, '0');
