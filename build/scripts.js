@@ -91,6 +91,7 @@ const populateHiScores = async () => {
     }
     const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
     if (!Array.isArray(getScoresResponse)) {
+        console.error('there was an error with the getScoresResponse . . .');
         alert('there was an error with the getScoresResponse . . .');
         return;
     }
@@ -122,24 +123,22 @@ const drawSnake = () => {
 const populatePill = (x, y) => {
     let pillIsInvalid = false;
     if (!x || !y) {
-        // get random 10x10 blocks on the canvas for pill placement
+        // get random coordinates on the canvas for pill placement
         // add five to center the pill in the square on the grid
         const possibleX = Math.random() * 60 + 5;
         const possibleY = Math.random() * 35 + 5;
-        // make sure the random coordinates are not on top of the snake
-        snake.forEach(part => {
-            if (possibleX * 10 - part.x <= 5 && possibleX * 10 - part.x >= -5 && possibleY * 10 - part.y <= 5 && possibleY * 10 - part.y >= -5) {
-                pillIsInvalid = true;
-            }
-        });
-        // make sure random coordinates are not off the border
+        // if coordinates are not within border
         if (possibleX * 10 < 5 || possibleX * 10 > 595 || possibleY * 10 < 5 || possibleY * 10 > 345) {
-            pillIsInvalid = true;
-        }
-        if (pillIsInvalid) {
             populatePill();
             return;
         }
+        // if coordinates are on snake
+        snake.forEach(part => {
+            if (possibleX * 10 - part.x <= 5 && possibleX * 10 - part.x >= -5 && possibleY * 10 - part.y <= 5 && possibleY * 10 - part.y >= -5) {
+                populatePill();
+                return;
+            }
+        });
         // scale values to actual columns and rows
         pillXValue = Math.round(possibleX) * 10 + 5;
         pillYValue = Math.round(possibleY) * 10 + 5;
@@ -270,7 +269,8 @@ const checkForPillCollision = (head) => {
     return false;
 };
 // update velocities based on keypresses
-// and make sure that you can't move backwards into your self
+// and make the snake can't back into
+// itself
 const setVelocities = (e) => {
     if (!keyClicked) {
         keyClicked = true;
