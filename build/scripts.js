@@ -1,5 +1,5 @@
 "use strict";
-// dom elements exist or error
+// dom elements exist or error out
 const throwDomError = (element) => {
     alert(`${element}: null or undefined . . .`);
     throw Error(`${element}: null or undefined . . .`);
@@ -7,7 +7,7 @@ const throwDomError = (element) => {
 // gameboard: dimensions are 600px x 350px each snake piece is 10px x 10px
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
 const snakeBoard = document.querySelector('.snake-game-canvas');
-// check for board to get context
+// check for board to get canvas context
 if (!snakeBoard)
     throwDomError('snakeBoard');
 const snakeBoardContext = snakeBoard.getContext('2d');
@@ -16,6 +16,9 @@ const instructionsModal = document.querySelector('.game-instructions-modal');
 const mobileNotSupportedModal = document.querySelector('.mobile-modal');
 const hiScoresModal = document.querySelector('.hi-scores-modal');
 const gameOverModal = document.querySelector('.game-over-modal');
+// targeted spans
+const finalScore = document.querySelector('.final-score');
+const timer = document.querySelector('.timer');
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button');
 const viewInstructionsButton = document.querySelector('.view-instructions-button');
@@ -23,38 +26,28 @@ const startOrResetButton = document.querySelector('.start-or-reset-game-button')
 const closeHiScoresButton = document.querySelector('.close-hi-scores-button');
 const closeGameOverButton = document.querySelector('.close-game-over-button');
 const viewHiScoresButton = document.querySelector('.view-hi-scores-button');
-// targeted spans
-const finalScore = document.querySelector('.final-score');
-const timer = document.querySelector('.timer');
 // dom checks
-if (!mobileNotSupportedModal)
-    throwDomError('mobileNotSupportedModal');
-if (!closeInstructionsButton)
-    throwDomError('closeInstructionsButton');
-if (!viewInstructionsButton)
-    throwDomError('viewInstructionsButton');
-if (!closeHiScoresButton)
-    throwDomError('closeHiScoresButton');
-if (!closeGameOverButton)
-    throwDomError('closeGameOverButton');
-if (!startOrResetButton)
-    throwDomError('startOrResetButton');
-if (!viewHiScoresButton)
-    throwDomError('viewHiScoresButton');
-if (!snakeBoardContext)
-    throwDomError('snakeBoardContext');
-if (!instructionsModal)
-    throwDomError('instructionsModal');
-if (!snakeGameWrapper)
-    throwDomError('snakeGameWrapper');
-if (!hiScoresModal)
-    throwDomError('hiScoresModal');
-if (!gameOverModal)
-    throwDomError('gameOverModal');
-if (!finalScore)
-    throwDomError('finalScore');
-if (!timer)
-    throwDomError('timer');
+const domElements = [
+    { snakeGameWrapper },
+    { snakeBoard },
+    { instructionsModal },
+    { mobileNotSupportedModal },
+    { hiScoresModal },
+    { gameOverModal },
+    { finalScore },
+    { timer },
+    { closeInstructionsButton },
+    { viewInstructionsButton },
+    { startOrResetButton },
+    { closeHiScoresButton },
+    { closeGameOverButton },
+    { viewHiScoresButton },
+];
+domElements.forEach((domElement, i) => {
+    const key = Object.keys(domElement)[0];
+    if (!domElements[i][key])
+        throwDomError(key);
+});
 closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
 viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
 startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
@@ -302,7 +295,6 @@ const setVelocities = (e) => {
 };
 const insertScore = async (name) => {
     const time = timer.innerText;
-    console.log(pillsEaten);
     const body = {
         name,
         score,

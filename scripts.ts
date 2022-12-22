@@ -1,59 +1,7 @@
-// dom elements exist or error
-const throwDomError = (element: string): Error => {
-  alert(`${element}: null or undefined . . .`);
-  throw Error (`${element}: null or undefined . . .`);
+// interfaces (obvoiusly..)
+interface DomElement {
+  [domElementName: string]: HTMLElement | CanvasRenderingContext2D | HTMLButtonElement
 }
-
-// gameboard: dimensions are 600px x 350px each snake piece is 10px x 10px
-const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
-const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
-
-// check for board to get context
-if (!snakeBoard) throwDomError('snakeBoard');
-const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
-
-// modals
-const instructionsModal = document.querySelector('.game-instructions-modal') as HTMLElement;
-const mobileNotSupportedModal = document.querySelector('.mobile-modal') as HTMLElement;
-const hiScoresModal = document.querySelector('.hi-scores-modal') as HTMLElement;
-const gameOverModal = document.querySelector('.game-over-modal') as HTMLElement;
-
-// buttons
-const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
-const viewInstructionsButton = document.querySelector('.view-instructions-button') as HTMLButtonElement;
-const startOrResetButton = document.querySelector('.start-or-reset-game-button') as HTMLButtonElement;
-const closeHiScoresButton = document.querySelector('.close-hi-scores-button') as HTMLButtonElement;
-const closeGameOverButton = document.querySelector('.close-game-over-button') as HTMLButtonElement;
-const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as HTMLButtonElement;
-
-// targeted spans
-const finalScore = document.querySelector('.final-score') as HTMLElement;
-const timer = document.querySelector('.timer') as HTMLElement;
-
-// dom checks
-if (!mobileNotSupportedModal) throwDomError('mobileNotSupportedModal');
-if (!closeInstructionsButton) throwDomError('closeInstructionsButton');
-if (!viewInstructionsButton) throwDomError('viewInstructionsButton');
-if (!closeHiScoresButton) throwDomError('closeHiScoresButton');
-if (!closeGameOverButton) throwDomError('closeGameOverButton');
-if (!startOrResetButton) throwDomError('startOrResetButton');
-if (!viewHiScoresButton) throwDomError('viewHiScoresButton');
-if (!snakeBoardContext) throwDomError('snakeBoardContext');
-if (!instructionsModal) throwDomError('instructionsModal');
-if (!snakeGameWrapper) throwDomError('snakeGameWrapper');
-if (!hiScoresModal) throwDomError('hiScoresModal');
-if (!gameOverModal) throwDomError('gameOverModal');
-if (!finalScore) throwDomError('finalScore');
-if (!timer) throwDomError('timer');
-
-closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
-viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
-startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
-closeHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
-closeGameOverButton.addEventListener('click', () => toggleModal(gameOverModal));
-viewHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
-snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
-snakeBoard.addEventListener('keydown', (e) => setVelocities(e));
 
 interface SnakeSegment {
   x: number,
@@ -81,6 +29,70 @@ interface RequestOptions {
     'content-type': string,
   },
 }
+
+// dom elements exist or error out
+const throwDomError = (element: string): Error => {
+  alert(`${element}: null or undefined . . .`);
+  throw Error (`${element}: null or undefined . . .`);
+}
+
+// gameboard: dimensions are 600px x 350px each snake piece is 10px x 10px
+const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
+const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
+
+// check for board to get canvas context
+if (!snakeBoard) throwDomError('snakeBoard');
+const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
+
+// modals
+const instructionsModal = document.querySelector('.game-instructions-modal') as HTMLElement;
+const mobileNotSupportedModal = document.querySelector('.mobile-modal') as HTMLElement;
+const hiScoresModal = document.querySelector('.hi-scores-modal') as HTMLElement;
+const gameOverModal = document.querySelector('.game-over-modal') as HTMLElement;
+
+// targeted spans
+const finalScore = document.querySelector('.final-score') as HTMLElement;
+const timer = document.querySelector('.timer') as HTMLElement;
+
+// buttons
+const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
+const viewInstructionsButton = document.querySelector('.view-instructions-button') as HTMLButtonElement;
+const startOrResetButton = document.querySelector('.start-or-reset-game-button') as HTMLButtonElement;
+const closeHiScoresButton = document.querySelector('.close-hi-scores-button') as HTMLButtonElement;
+const closeGameOverButton = document.querySelector('.close-game-over-button') as HTMLButtonElement;
+const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as HTMLButtonElement;
+
+// dom checks
+const domElements: DomElement[] = [
+  { snakeGameWrapper },
+  { snakeBoard },
+  { instructionsModal },
+  { mobileNotSupportedModal },
+  { hiScoresModal },
+  { gameOverModal },
+  { finalScore },
+  { timer },
+  { closeInstructionsButton },
+  { viewInstructionsButton },
+  { startOrResetButton },
+  { closeHiScoresButton },
+  { closeGameOverButton },
+  { viewHiScoresButton },
+];
+
+domElements.forEach((domElement: DomElement, i) => {
+  const key: string = Object.keys(domElement)[0];
+  if (!domElements[i][key]) throwDomError(key);
+});
+
+closeInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
+viewInstructionsButton.addEventListener('click', () => toggleModal(instructionsModal));
+startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
+closeHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
+closeGameOverButton.addEventListener('click', () => toggleModal(gameOverModal));
+viewHiScoresButton.addEventListener('click', () => toggleModal(hiScoresModal));
+snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
+snakeBoard.addEventListener('keydown', (e) => setVelocities(e));
 
 // snake
 const snake: SnakeSegment[] = [
@@ -363,7 +375,6 @@ const setVelocities = (e: KeyboardEvent): void => {
 
 const insertScore = async (name: string): Promise<void> => {
   const time = timer.innerText;
-  console.log(pillsEaten);
   const body: Score = {
     name,
     score,
