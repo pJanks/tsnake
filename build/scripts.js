@@ -6,11 +6,13 @@ const throwAlertAndError = (identifier) => {
 };
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
 const snakeBoard = document.querySelector('.snake-game-canvas');
-if (!snakeBoard)
+if (!snakeBoard) {
     throwAlertAndError('snakeBoard'); // validate canvas element
+}
 const snakeBoardContext = snakeBoard.getContext('2d');
-if (!snakeBoardContext)
+if (!snakeBoardContext) {
     throwAlertAndError('snakeBoardContext'); // validate context element
+}
 // * all dom elements to be bulk verified:
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
 // buttons
