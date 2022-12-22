@@ -39,7 +39,7 @@ interface RequestOptions {
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
-if (!snakeBoard) throwDomError('snakeBoard'); // verify gameboard or error
+if (!snakeBoard) throwDomError('snakeBoard'); // validate gameboard
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
 
 // modals
@@ -63,7 +63,6 @@ const viewHiScoresButton = document.querySelector('.view-hi-scores-button') as H
 // check validity of all declared dom elements
 const domElements: DomElement[] = [
   { snakeGameWrapper },
-  { snakeBoard },
   { instructionsModal },
   { mobileNotSupportedModal },
   { hiScoresModal },

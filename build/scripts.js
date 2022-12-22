@@ -8,7 +8,7 @@ const throwDomError = (elementName) => {
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
 const snakeBoard = document.querySelector('.snake-game-canvas');
 if (!snakeBoard)
-    throwDomError('snakeBoard'); // verify gameboard or error
+    throwDomError('snakeBoard'); // validate gameboard
 const snakeBoardContext = snakeBoard.getContext('2d');
 // modals
 const instructionsModal = document.querySelector('.game-instructions-modal');
@@ -28,7 +28,6 @@ const viewHiScoresButton = document.querySelector('.view-hi-scores-button');
 // check validity of all declared dom elements
 const domElements = [
     { snakeGameWrapper },
-    { snakeBoard },
     { instructionsModal },
     { mobileNotSupportedModal },
     { hiScoresModal },
