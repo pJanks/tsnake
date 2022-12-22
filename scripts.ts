@@ -4,9 +4,9 @@ const throwDomError = (elementName: string): never => {
   throw Error(`${elementName}: null or undefined . . .`);
 }
 
-// interfaces, obvoiusly..
+// interfaces (obvoiusly..)
 interface DomElement {
-  [domElementName: string]: HTMLElement | CanvasRenderingContext2D | HTMLButtonElement
+  [domElementName: string]: HTMLElement | HTMLButtonElement,
 }
 
 interface SnakeSegment {
@@ -38,9 +38,13 @@ interface RequestOptions {
 
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
+if (!snakeGameWrapper) throwDomError('snakeGameWrapper'); // validate game wrapper
+
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
-if (!snakeBoard) throwDomError('snakeBoard'); // validate gameboard
+if (!snakeBoard) throwDomError('snakeBoard'); // validate canvas element
+
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
+if (!snakeBoardContext) throwDomError('snakeBoardContext'); // validate context element
 
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
@@ -61,8 +65,7 @@ const finalScore = document.querySelector('.final-score') as HTMLElement;
 const timer = document.querySelector('.timer') as HTMLElement;
 
 // check validity of all declared dom elements
-const domElements: DomElement[] = [
-  { snakeGameWrapper },
+const uncheckedDomElements: DomElement[] = [
   { closeInstructionsButton },
   { viewInstructionsButton },
   { closeHiScoresButton },
@@ -77,9 +80,9 @@ const domElements: DomElement[] = [
   { timer },
 ];
 
-domElements.forEach((domElement: DomElement, i: number): void => {
-  const key: string = Object.keys(domElement)[0];
-  if (!domElements[i][key]) throwDomError(key);
+uncheckedDomElements.forEach((uncheckedDomElement: DomElement, i: number): void => {
+  const key: string = Object.keys(uncheckedDomElement)[0];
+  if (!uncheckedDomElements[i][key]) throwDomError(key);
 });
 
 startOrResetButton.addEventListener('click', (e: MouseEvent) => handleStartOrResetButtonClick(e));
@@ -362,16 +365,16 @@ const setVelocities = (e: KeyboardEvent): void => {
   if (!keyClicked) {
     keyClicked = true;
     const key: string = e.key.toLowerCase();
-    if (!xVelocity && key === 'a' || key === 'arrowleft') {
+    if (!xVelocity && (key === 'a' || key === 'arrowleft')) {
       xVelocity = -10;
       yVelocity = 0;
-    } else if (!xVelocity && key === 'd' || key === 'arrowright') {
+    } else if (!xVelocity && (key === 'd' || key === 'arrowright')) {
       xVelocity = 10;
       yVelocity = 0;
-    } else if (!yVelocity && key === 'w' || key === 'arrowup') {
+    } else if (!yVelocity && (key === 'w' || key === 'arrowup')) {
       xVelocity = 0;
       yVelocity = -10;
-    } else if (!yVelocity && key === 's' || key === 'arrowdown') {
+    } else if (!yVelocity && (key === 's' || key === 'arrowdown')) {
       xVelocity = 0;
       yVelocity = 10;
     }

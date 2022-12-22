@@ -6,10 +6,14 @@ const throwDomError = (elementName) => {
 };
 // gameboard: dimensions are 600px x 350px each snake segment is 10px x 10px
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
+if (!snakeGameWrapper)
+    throwDomError('snakeGameWrapper'); // validate game wrapper
 const snakeBoard = document.querySelector('.snake-game-canvas');
 if (!snakeBoard)
-    throwDomError('snakeBoard'); // validate gameboard
+    throwDomError('snakeBoard'); // validate canvas element
 const snakeBoardContext = snakeBoard.getContext('2d');
+if (!snakeBoardContext)
+    throwDomError('snakeBoardContext'); // validate context element
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button');
 const viewInstructionsButton = document.querySelector('.view-instructions-button');
@@ -26,8 +30,7 @@ const gameOverModal = document.querySelector('.game-over-modal');
 const finalScore = document.querySelector('.final-score');
 const timer = document.querySelector('.timer');
 // check validity of all declared dom elements
-const domElements = [
-    { snakeGameWrapper },
+const uncheckedDomElements = [
     { closeInstructionsButton },
     { viewInstructionsButton },
     { closeHiScoresButton },
@@ -41,9 +44,9 @@ const domElements = [
     { finalScore },
     { timer },
 ];
-domElements.forEach((domElement, i) => {
-    const key = Object.keys(domElement)[0];
-    if (!domElements[i][key])
+uncheckedDomElements.forEach((uncheckedDomElement, i) => {
+    const key = Object.keys(uncheckedDomElement)[0];
+    if (!uncheckedDomElements[i][key])
         throwDomError(key);
 });
 startOrResetButton.addEventListener('click', (e) => handleStartOrResetButtonClick(e));
@@ -281,19 +284,19 @@ const setVelocities = (e) => {
     if (!keyClicked) {
         keyClicked = true;
         const key = e.key.toLowerCase();
-        if (!xVelocity && key === 'a' || key === 'arrowleft') {
+        if (!xVelocity && (key === 'a' || key === 'arrowleft')) {
             xVelocity = -10;
             yVelocity = 0;
         }
-        else if (!xVelocity && key === 'd' || key === 'arrowright') {
+        else if (!xVelocity && (key === 'd' || key === 'arrowright')) {
             xVelocity = 10;
             yVelocity = 0;
         }
-        else if (!yVelocity && key === 'w' || key === 'arrowup') {
+        else if (!yVelocity && (key === 'w' || key === 'arrowup')) {
             xVelocity = 0;
             yVelocity = -10;
         }
-        else if (!yVelocity && key === 's' || key === 'arrowdown') {
+        else if (!yVelocity && (key === 's' || key === 'arrowdown')) {
             xVelocity = 0;
             yVelocity = 10;
         }
