@@ -32,7 +32,7 @@ interface RequestOptions {
 }
 
 // if any validation check fails alert and throw error
-const alertAndThrowError = (identifier: string, method?: string): never => {
+const alertAndThrowError = (identifier: string): never => {
   const message: string = `something is wrong with ${identifier}`;
   alert(message);
   throw new Error(message);
@@ -141,7 +141,7 @@ const initialTableObject: ConsoleTable = {
 };
 console.table(initialTableObject);
 
-const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> | never => {
+const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> => {
   try {
     const response: Response = await fetch(url, options);
     const parsedResponse:  Score[] | void = await response.json();
@@ -150,7 +150,7 @@ const makeNetworkRequest = async (url: string, options?: RequestOptions): Promis
     hiScoresStayDisabled = true;
     viewHiScoresButton.disabled = true;
     const method: string = options?.method ?? 'GET';
-    throw new Error(`something is wrong with makeNetworkRequest. method: ${method}`)
+    console.warn(`something is wrong in makeNetworkRequest, method: ${method}. this is probably a db connection issue`);
   }
 }
 

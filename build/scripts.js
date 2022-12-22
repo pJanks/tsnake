@@ -1,6 +1,6 @@
 "use strict";
 // if any validation check fails alert and throw error
-const alertAndThrowError = (identifier, method) => {
+const alertAndThrowError = (identifier) => {
     const message = `something is wrong with ${identifier}`;
     alert(message);
     throw new Error(message);
@@ -93,7 +93,7 @@ const makeNetworkRequest = async (url, options) => {
         hiScoresStayDisabled = true;
         viewHiScoresButton.disabled = true;
         const method = options?.method ?? 'GET';
-        throw new Error(`something is wrong with makeNetworkRequest. method: ${method}`);
+        console.warn(`something is wrong in makeNetworkRequest, method: ${method}. this is probably a db connection issue`);
     }
 };
 const padNumber = (number) => String(number).padStart(2, '0');
