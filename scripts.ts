@@ -147,13 +147,14 @@ const initialTableObject: ConsoleTable = {
 };
 console.table(initialTableObject);
 
-const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> => {
+const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> | never => {
   try {
     const response: Response = await fetch(url, options);
     const parsedResponse:  Score[] | void = await response.json();
     return parsedResponse;
   } catch(err) {
-    alertAndThrowError('makeNetworkRequest', options?.method ?? 'GET');
+    const method: string = options?.method ?? 'GET';
+    throw new Error(`something is wrong with makeNetworkRequest. method: ${method}`)
   }
 }
 

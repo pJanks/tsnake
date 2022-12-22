@@ -95,7 +95,8 @@ const makeNetworkRequest = async (url, options) => {
         return parsedResponse;
     }
     catch (err) {
-        alertAndThrowError('makeNetworkRequest', options?.method ?? 'GET');
+        const method = options?.method ?? 'GET';
+        throw new Error(`something is wrong with makeNetworkRequest. method: ${method}`);
     }
 };
 const padNumber = (number) => String(number).padStart(2, '0');
