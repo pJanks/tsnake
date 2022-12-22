@@ -1,4 +1,4 @@
-// interfaces (obvoiusly..)
+// interfaces, obvoiusly..
 interface DomElement {
   [domElementName: string]: HTMLElement | CanvasRenderingContext2D | HTMLButtonElement
 }
@@ -33,7 +33,7 @@ interface RequestOptions {
 // dom elements exist or error out
 const throwDomError = (element: string): Error => {
   alert(`${element}: null or undefined . . .`);
-  throw Error (`${element}: null or undefined . . .`);
+  throw Error(`${element}: null or undefined . . .`);
 }
 
 // gameboard: dimensions are 600px x 350px each snake piece is 10px x 10px
