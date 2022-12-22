@@ -1,6 +1,5 @@
 "use strict";
-// gameboard dimensions are 600px x 350px and each snake segment is 10px x 10px
-// fn to alert and error out
+// if any check fails alert and throw error
 const throwAlertAndError = (identifier, method) => {
     const startingMessageFragment = `something is wrong with ${identifier}`;
     const endingMessageFragment = method ? `, method: ${method}..` : '..';
@@ -10,20 +9,17 @@ const throwAlertAndError = (identifier, method) => {
 };
 // validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper');
-if (!snakeGameWrapper) {
+if (!snakeGameWrapper)
     throwAlertAndError('snakeGameWrapper');
-}
 // validate canvas
 const snakeBoard = document.querySelector('.snake-game-canvas');
-if (!snakeBoard) {
+if (!snakeBoard)
     throwAlertAndError('snakeBoard');
-}
 // validate context
 const snakeBoardContext = snakeBoard.getContext('2d');
-if (!snakeBoardContext) {
+if (!snakeBoardContext)
     throwAlertAndError('snakeBoardContext');
-}
-// ? declare and validate other existing dom elements
+// * validate other existing dom elements
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button');
 const viewInstructionsButton = document.querySelector('.view-instructions-button');
@@ -78,7 +74,7 @@ const snake = [
     { x: 270, y: 180 },
     { x: 260, y: 180 },
 ];
-let pillColor = '#F00', keyClicked = false, running = false, loser = false, hiScores = [], pillsEaten = 0, xVelocity = 10, yVelocity = 0, timeout = 100, points = 100, minutes = 0, seconds = 0, pillXValue, pillYValue, score = 0, hours = 0, interval;
+let pillColor = '#F00', keyClicked = false, running = false, loser = false, hiScores = [], pillsEaten = 0, xVelocity = 10, yVelocity = 0, timeout = 100, points = 100, minutes = 0, seconds = 0, score = 0, hours = 0, pillXValue, pillYValue, interval;
 // print defaults
 const initialTableObject = {
     intervalRunsIn: `${timeout} ms`,
@@ -109,7 +105,8 @@ const populateHiScores = async () => {
     }
     const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
     if (Array.isArray(getScoresResponse)) {
-        for (let i = 0; i < 10; i++) {
+        let i = 0;
+        for (i; i < 10; i++) {
             const hiScore = getScoresResponse[i] ?? {
                 name: 'EMPTY',
                 score: 0,

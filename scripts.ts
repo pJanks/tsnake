@@ -1,5 +1,5 @@
-// gameboard dimensions are 600px x 350px and each snake segment is 10px x 10px
-
+// gameboard canvas dimensions are 600px x 350px
+// each SnakeSegment or pill occupies 10px x 10px
 interface DomElement {
   [domElementName: string]: HTMLElement | HTMLButtonElement,
 }
@@ -31,35 +31,29 @@ interface RequestOptions {
   },
 }
 
-// fn to alert and error out
+// if any check fails alert and throw error
 const throwAlertAndError = (identifier: string, method?: string): never => {
   const startingMessageFragment: string = `something is wrong with ${identifier}`;
   const endingMessageFragment: string = method ? `, method: ${method}..` : '..';
   const message: string = `${startingMessageFragment}${endingMessageFragment}`;
-  
+
   alert(message);
   throw new Error(message);
 }
 
 // validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
-if (!snakeGameWrapper) {
-  throwAlertAndError('snakeGameWrapper');
-}
+if (!snakeGameWrapper) throwAlertAndError('snakeGameWrapper');
 
 // validate canvas
 const snakeBoard = document.querySelector('.snake-game-canvas') as HTMLCanvasElement;
-if (!snakeBoard) {
-  throwAlertAndError('snakeBoard');
-}
+if (!snakeBoard) throwAlertAndError('snakeBoard');
 
 // validate context
 const snakeBoardContext = snakeBoard.getContext('2d') as CanvasRenderingContext2D;
-if (!snakeBoardContext) {
-  throwAlertAndError('snakeBoardContext');
-}
+if (!snakeBoardContext) throwAlertAndError('snakeBoardContext');
 
-// ? declare and validate other existing dom elements
+// * validate other existing dom elements
 // buttons
 const closeInstructionsButton = document.querySelector('.close-instructions-button') as HTMLButtonElement;
 const viewInstructionsButton = document.querySelector('.view-instructions-button') as HTMLButtonElement;
@@ -132,10 +126,10 @@ timeout: number = 100,
 points: number = 100,
 minutes: number = 0,
 seconds: number = 0,
-pillXValue: number,
-pillYValue: number,
 score: number = 0,
 hours: number = 0,
+pillXValue: number,
+pillYValue: number,
 interval: number;
 
 // print defaults
@@ -173,7 +167,8 @@ const populateHiScores = async (): Promise<void> => {
   const getScoresResponse: Score[] | void = await makeNetworkRequest('backend/get_scores.php');
 
   if (Array.isArray(getScoresResponse)) {
-    for (let i: number = 0; i < 10; i++) {
+    let i: number = 0;
+    for (i; i < 10; i++) {
       const hiScore: Score = getScoresResponse[i] ?? {
         name: 'EMPTY',
         score: 0,
