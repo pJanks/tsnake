@@ -1,11 +1,5 @@
-// alert and error out
-const throwAlertAndError = (identifier: string, method?: string): never => {
-  const message: string = method ? `something is wrong with ${identifier}` : `something is wrong with ${identifier} with method ${method}`;
-  alert(message);
-  throw new Error(message);
-}
+// gameboard dimensions are 600px x 350px and each snake segment is 10px x 10px
 
-// interfaces (obvoiusly..)
 interface DomElement {
   [domElementName: string]: HTMLElement | HTMLButtonElement,
 }
@@ -37,8 +31,13 @@ interface RequestOptions {
   },
 }
 
-// gameboard dimensions are 600px x 350px
-// each snake segment is 10px x 10px
+// fn to alert and error out
+const throwAlertAndError = (identifier: string, method?: string): never => {
+  const startingMessageFragment = 'something is wrong with ';
+  const endingMessageFragment: string = method ? `${identifier}` : `${identifier}, method: ${method}`;
+  alert(`${startingMessageFragment}${endingMessageFragment}`);
+  throw new Error(`${startingMessageFragment}${endingMessageFragment}`);
+}
 
 // validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
