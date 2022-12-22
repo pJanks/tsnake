@@ -3,8 +3,8 @@
 // fn to alert and error out
 const throwAlertAndError = (identifier, method) => {
     const startingMessageFragment = `something is wrong with ${identifier}`;
-    const possibleEndingMessageFragment = method ? `, method: ${method}` : '';
-    const message = `${startingMessageFragment}${possibleEndingMessageFragment}`;
+    const endingMessageFragment = method ? `, method: ${method}..` : '..';
+    const message = `${startingMessageFragment}${endingMessageFragment}`;
     alert(message);
     throw new Error(message);
 };

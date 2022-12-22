@@ -34,8 +34,8 @@ interface RequestOptions {
 // fn to alert and error out
 const throwAlertAndError = (identifier: string, method?: string): never => {
   const startingMessageFragment: string = `something is wrong with ${identifier}`;
-  const possibleEndingMessageFragment: string = method ? `, method: ${method}` : '';
-  const message: string = `${startingMessageFragment}${possibleEndingMessageFragment}`;
+  const endingMessageFragment: string = method ? `, method: ${method}..` : '..';
+  const message: string = `${startingMessageFragment}${endingMessageFragment}`;
   
   alert(message);
   throw new Error(message);
