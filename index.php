@@ -104,5 +104,5 @@
       </section>
     </main>
   </body>
-  <script src="build/scripts"></script>
+  <script src="build/scripts.js"></script>
 </html>
