@@ -250,6 +250,13 @@ body {
   border-bottom: 1px solid #28BD00;
 }
 
+.db-error {
+  font-size: 190%;
+  font-weight: 600;
+  margin-bottom: 150px;
+  text-transform: uppercase;
+}
+
 .hidden {
   display: none;
 }

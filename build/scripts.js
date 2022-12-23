@@ -101,6 +101,9 @@ const makeNetworkRequest = async (url, options) => {
 };
 const padNumber = (number) => String(number).padStart(2, '0');
 const toggleModal = (modal) => {
+    if (dbError) {
+        hiScoresModal.innerHTML = '<span class="db-error">no database configured or database errors</span>';
+    }
     snakeGameWrapper.classList.toggle('hidden');
     modal.classList.toggle('hidden');
 };
@@ -109,7 +112,7 @@ const populateHiScores = async () => {
         toggleModal(mobileNotSupportedModal);
         return;
     }
-    const getScoresResponse = await makeNetworkRequest('backennd/get_scores.php');
+    const getScoresResponse = await makeNetworkRequest('backend/get_scores.php');
     if (Array.isArray(getScoresResponse)) {
         const emptyScore = {
             name: 'EMPTY',

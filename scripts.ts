@@ -160,6 +160,9 @@ const makeNetworkRequest = async (url: string, options?: RequestOptions): Promis
 const padNumber = (number: number): string => String(number).padStart(2, '0');
 
 const toggleModal = (modal: HTMLElement): void => {
+  if (dbError) {
+    hiScoresModal.innerHTML = '<span class="db-error">no database configured or database errors</span>';
+  }
   snakeGameWrapper.classList.toggle('hidden');
   modal.classList.toggle('hidden');
 }
@@ -170,7 +173,7 @@ const populateHiScores = async (): Promise<void> => {
     return;
   }
 
-  const getScoresResponse: Score[] | void = await makeNetworkRequest('backennd/get_scores.php');
+  const getScoresResponse: Score[] | void = await makeNetworkRequest('backend/get_scores.php');
 
   if (Array.isArray(getScoresResponse)) {
     const emptyScore = {
