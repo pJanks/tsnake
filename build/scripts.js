@@ -84,9 +84,6 @@ const initialTableObject = {
 };
 console.table(initialTableObject);
 const makeNetworkRequest = async (url, options) => {
-    if (dbError) {
-        return [];
-    }
     try {
         const response = await fetch(url, options);
         const parsedResponse = await response.json();
@@ -96,13 +93,16 @@ const makeNetworkRequest = async (url, options) => {
         dbError = true;
         const method = options?.method ?? 'GET';
         console.warn(`something is wrong in makeNetworkRequest, method: ${method}. this is probably a db connection issue`);
-        return [];
     }
 };
 const padNumber = (number) => String(number).padStart(2, '0');
 const toggleModal = (modal) => {
     if (dbError) {
-        hiScoresModal.innerHTML = '<span class="db-error">no database configured or database errors</span>';
+        hiScoresModal.innerHTML = `
+      <span class="db-error">no database configured or database errors</span>
+      <br />
+      <a href="https://tsnake.johnnycassidy.dev">R00T</a>
+    `;
     }
     snakeGameWrapper.classList.toggle('hidden');
     modal.classList.toggle('hidden');
