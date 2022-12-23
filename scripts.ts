@@ -4,26 +4,26 @@ interface DomElement {
   [domElementName: string]: HTMLElement | HTMLButtonElement,
 }
 
-interface SnakeSegment {
+type SnakeSegment = {
   x: number,
   y: number,
 }
 
-interface Score {
+type Score = {
   name: string,
   score: number,
   time: string,
   pills_eaten: number,
 }
 
-interface ConsoleTable {
+type ConsoleTable = {
   intervalRunsIn: string,
   nextPillIsWorth: number,
   score: number,
   pillsEaten: number,
 }
 
-interface RequestOptions {
+type RequestOptions = {
   method: string,
   body: string,
   headers: {
@@ -38,7 +38,7 @@ const alertAndThrowError = (identifier: string): never => {
   throw new Error(message);
 }
 
-// * select and validate existing dom elements
+// ! select and validate existing dom elements
 // select and validate game wrapper
 const snakeGameWrapper = document.querySelector('.snake-game-wrapper') as HTMLElement;
 if (!snakeGameWrapper) alertAndThrowError('snakeGameWrapper');
@@ -105,7 +105,7 @@ snakeBoard.addEventListener('blur', () => !running || snakeBoard.focus());
 
 // nonconstant global variables
 let pillColor: string = '#F00',
-hiScoresStayDisabled: boolean = false,
+dbError: boolean = false,
 keyClicked: boolean = false,
 running: boolean = false,
 loser: boolean = false,
@@ -142,7 +142,7 @@ const initialTableObject: ConsoleTable = {
 console.table(initialTableObject);
 
 const makeNetworkRequest = async (url: string, options?: RequestOptions): Promise<Score[] | void> => {
-  if (hiScoresStayDisabled) {
+  if (dbError) {
     return [];
   }
   try {
@@ -150,10 +150,10 @@ const makeNetworkRequest = async (url: string, options?: RequestOptions): Promis
     const parsedResponse:  Score[] | void = await response.json();
     return parsedResponse;
   } catch(err) {
-    hiScoresStayDisabled = true;
-    viewHiScoresButton.disabled = true;
+    dbError = true;
     const method: string = options?.method ?? 'GET';
     console.warn(`something is wrong in makeNetworkRequest, method: ${method}. this is probably a db connection issue`);
+    return [];
   }
 }
 
@@ -170,7 +170,7 @@ const populateHiScores = async (): Promise<void> => {
     return;
   }
 
-  const getScoresResponse: Score[] | void = await makeNetworkRequest('backend/get_scores.php');
+  const getScoresResponse: Score[] | void = await makeNetworkRequest('backennd/get_scores.php');
 
   if (Array.isArray(getScoresResponse)) {
     const emptyScore = {
@@ -201,10 +201,7 @@ const populateHiScores = async (): Promise<void> => {
   }
   startOrResetButton.disabled = false;
   viewInstructionsButton.disabled = false;
-
-  if (!hiScoresStayDisabled) {
-    viewHiScoresButton.disabled = false;
-  }
+  viewHiScoresButton.disabled = false;
 }
 
 const drawSnake = (): void => {
@@ -288,16 +285,13 @@ const adjustTimes = (): void => {
 const runGame = async (): Promise<void> => {
   if (loser) {
     viewInstructionsButton.disabled = false;
-
-    if (!hiScoresStayDisabled) {
-      viewHiScoresButton.disabled = false;
-    }
+    viewHiScoresButton.disabled = false;
 
     toggleModal(gameOverModal);
     closeGameOverButton.focus();
     finalScore.innerText = String(score);
 
-    if (!viewHiScoresButton.disabled && score >= hiScores[9].score) {
+    if (!dbError && score >= hiScores[9].score) {
       const name = prompt(`
         Congrats, You\'ve scored in the top 10!!
         Please enter an identifier:
